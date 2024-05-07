@@ -17,7 +17,7 @@ return new class extends Migration
             $table->foreign('employer_id')->references('id')->on('employers')->onDelete('cascade');
             $table->string('job_title');
             $table->text('description');
-            $table->text('responabilities');
+            $table->text('responsibilities');
             $table->text('qualifications');
             $table->integer('start_salary');
             $table->integer('end_salary');
@@ -34,6 +34,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('jobs');
+        Schema::dropIfExists('posts');
     }
 };

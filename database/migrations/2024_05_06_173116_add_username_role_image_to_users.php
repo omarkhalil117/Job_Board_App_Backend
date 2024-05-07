@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::table('users', function (Blueprint $table) {
             $table->string('username')->unique();
             $table->enum('role', ['admin','employer','candidate']);
-            $table->string('imgae');
+            $table->string('image')->nullable();
             $table->unsignedBigInteger('userable_id')->nullable();
             $table->string('userable_type')->nullable();
         });
@@ -26,11 +26,11 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('users', function (Blueprint $table) {
-            $this->dropColumn('username');
-            $this->dropColumn('role');
-            $this->dropColumn('image');
-            $this->dropColumn('userable_id');
-            $this->dropColumn('userable_type');
+            $table->dropColumn('username');
+            $table->dropColumn('role');
+            $table->dropColumn('image');
+            $table->dropColumn('userable_id');
+            $table->dropColumn('userable_type');
         });
     }
 };

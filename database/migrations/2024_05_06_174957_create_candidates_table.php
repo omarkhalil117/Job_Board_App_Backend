@@ -19,8 +19,8 @@ return new class extends Migration
             $table->string('city');
             $table->enum('experience_level', ['junior','mid-senior','senior','manager','team-lead']);
             $table->string('address');
-            $table->string('linkedin');
-            $table->string('github');
+            $table->string('linkedin')->nullable();
+            $table->string('github')->nullable();
             $table->timestamps();
         });
     }
