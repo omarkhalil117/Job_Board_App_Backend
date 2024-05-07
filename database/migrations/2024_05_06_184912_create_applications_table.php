@@ -18,8 +18,8 @@ return new class extends Migration
             $table->foreign('candidate_id')->references('id')->on('candidates')->onDelete('cascade');
             $table->foreign('post_id')->references('id')->on('posts')->onDelete('cascade');
             $table->string('resume');
-            $table->string('email');
-            $table->string('phone');
+            $table->string('email')->nullable();
+            $table->string('phone')->nullable();
             $table->enum('status', ['pending','accepted','rejected']);
             $table->timestamps();
         });
