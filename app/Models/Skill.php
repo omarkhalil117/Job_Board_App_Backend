@@ -11,6 +11,11 @@ class Skill extends Model
 
     public function candidates()
     {
-        return $this->belongsToMany(Candidate::class);
+        return $this->belongsToMany(Candidate::class , 'candidate_skill');
+    }
+
+    public function posts()
+    {
+        return $this->belongsToMany(Post::class , 'post_skill');
     }
 }
