@@ -11,4 +11,7 @@ class Application extends Model
     public function candidate(){
         return $this->belongsTo(Candidate::class);
     }
+    public function post(){
+        return $this->belongsTo(Post::class);
+    }
 }
