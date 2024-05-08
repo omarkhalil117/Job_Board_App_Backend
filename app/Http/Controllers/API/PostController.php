@@ -3,9 +3,10 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
-use App\Models\Post;
 use Illuminate\Http\Request;
 
+use App\Models\Post;
+use App\Http\Resources\PostResource;
 class PostController extends Controller
 {
     /**
@@ -13,7 +14,8 @@ class PostController extends Controller
      */
     public function index()
     {
-
+        $posts = Post::with('skills', 'employer')->get();
+        return response()->json(["status" => "success", "data" => PostResource::collection($posts)]);
     }
 
     /**
@@ -21,7 +23,8 @@ class PostController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        return response()->json(["status" => "success", "message" => "Post created successfully"]);
+
     }
 
     /**
@@ -29,6 +32,7 @@ class PostController extends Controller
      */
     public function show(Post $post)
     {
+        return response()->json(["status" => "success", "data" => new PostResource($job)]);
 
     }
 
@@ -37,7 +41,8 @@ class PostController extends Controller
      */
     public function update(Request $request, Post $post)
     {
-        //
+        return response()->json(["status" => "success", "data" => new PostResource($job)]);
+
     }
 
     /**
@@ -45,6 +50,7 @@ class PostController extends Controller
      */
     public function destroy(Post $post)
     {
-        //
+        return response()->json(["status" => "success", "message" => "Post deleted successfully"]);
+
     }
 }
