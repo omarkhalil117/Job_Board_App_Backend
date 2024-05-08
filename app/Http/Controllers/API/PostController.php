@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
-use App\Models\Job;
+use App\Models\Post;
 use Illuminate\Http\Request;
 
 class PostController extends Controller
@@ -13,7 +13,7 @@ class PostController extends Controller
      */
     public function index()
     {
-        //
+
     }
 
     /**
@@ -27,15 +27,15 @@ class PostController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Job $job)
+    public function show(Post $post)
     {
-        //
+
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Job $job)
+    public function update(Request $request, Post $post)
     {
         //
     }
@@ -43,7 +43,7 @@ class PostController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Job $job)
+    public function destroy(Post $post)
     {
         //
     }
