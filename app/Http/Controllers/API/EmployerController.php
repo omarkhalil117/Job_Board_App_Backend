@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use App\Models\Employer;
 use App\Models\User;
 use App\Http\Resources\EmployerResource;
+use App\Http\Requests\UpdateUserRequest;
 
 class EmployerController extends Controller
 {
@@ -39,8 +40,9 @@ class EmployerController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Employer $employer)
+    public function update(UpdateUserRequest $request, Employer $employer)
     {
+
         $user_id = $employer->user->id;
         $user = User::findOrFail($user_id);
       
@@ -49,7 +51,7 @@ class EmployerController extends Controller
         $user->update($request_parms);
         $employer->update($request_parms);
         
-        return $employer;
+        return new EmployerResource($employer) ;
     }
 
     /**
