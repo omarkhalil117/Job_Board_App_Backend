@@ -23,7 +23,8 @@ class EmployerController extends Controller
     public function index()
     {
         $employers = Employer::with('user')->get();
-        return  EmployerResource::collection($employers);  
+        return response()->json(["status" => "success", "data" => EmployerResource::collection($employers)]);
+
     }
 
     /**
@@ -32,6 +33,8 @@ class EmployerController extends Controller
     public function store(Request $request)
     {
         //
+        return response()->json(["status" => "success", "message" => "Employer created successfully"]);
+
     }
 
     /**
@@ -40,6 +43,8 @@ class EmployerController extends Controller
     public function show(Employer $employer)
     {
         //
+        return response()->json(["status" => "success", "data" => new EmployerResource($employer)]);
+
     }
 
     /**
@@ -56,7 +61,8 @@ class EmployerController extends Controller
         $user->update($request_parms);
         $employer->update($request_parms);
         
-        return new EmployerResource($employer) ;
+        return response()->json(["status" => "success", "data" => new EmployerResource($employer)]);
+
     }
 
     /**
@@ -65,11 +71,14 @@ class EmployerController extends Controller
     public function destroy(Employer $employer)
     {
         //
+        return response()->json(["status" => "success", "message" => "Employer deleted successfully"]);
+
     }
     public function getApplications( string $post_id ){
         $post = new PostResource(Post::find($post_id));
         $apps = Application::where("post_id",$post_id)->with("candidate")->get();
-        return response()->json(["post" => $post, "applications" => $apps]) ;
+        return response()->json(["status" => "success", "post" => $post, "applications" => $apps]);
+
     }
     public function approveApplication(Request $request, string $application_id)
     {
