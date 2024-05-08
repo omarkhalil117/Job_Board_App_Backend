@@ -3,8 +3,10 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
-use App\Models\Employer;
 use Illuminate\Http\Request;
+
+use App\Models\Employer;
+use App\Http\Resources\EmployerResource;
 
 class EmployerController extends Controller
 {
@@ -13,7 +15,8 @@ class EmployerController extends Controller
      */
     public function index()
     {
-        //
+        $employers = Employer::with('user')->get();
+        return  EmployerResource::collection($employers);  
     }
 
     /**

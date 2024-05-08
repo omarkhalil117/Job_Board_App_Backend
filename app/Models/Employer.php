@@ -13,4 +13,9 @@ class Employer extends Model
     {
         return $this->morphOne(User::class, 'userable');
     }
+
+    public function posts()
+    {
+        return $this->hasMany(Post::class);
+    }
 }
