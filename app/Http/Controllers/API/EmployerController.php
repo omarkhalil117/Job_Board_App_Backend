@@ -7,8 +7,13 @@ use Illuminate\Http\Request;
 
 use App\Models\Employer;
 use App\Models\User;
+use App\Models\Post;
+
+use App\Models\Application;
 use App\Http\Resources\EmployerResource;
 use App\Http\Requests\UpdateUserRequest;
+use App\Http\Resources\PostResource;
+
 
 class EmployerController extends Controller
 {
@@ -60,5 +65,10 @@ class EmployerController extends Controller
     public function destroy(Employer $employer)
     {
         //
+    }
+    public function getApplications(string $post_id ){
+        $post = new PostResource(Post::find($post_id));
+        $apps = Application::where("post_id",$post_id)->with("candidate")->get();
+        return response()->json(["post" => $post, "applications" => $apps]) ;
     }
 }

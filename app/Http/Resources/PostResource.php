@@ -31,7 +31,9 @@ class PostResource extends JsonResource
             'work_type'=>$this->work_type,
             'application_deadline'=>$this->application_deadline,
             'status'=>$this->status,
-            'skills'=>SkillResource::collection($this->skills)
+            // 'skills'=>$this->skills
+            // 'skills'=>SkillResource::collection($this->skills)
+            'skills'=>$this->skills->pluck('skill')->toArray() 
         ];
     }
 }

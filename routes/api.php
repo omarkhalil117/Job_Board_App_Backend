@@ -12,3 +12,4 @@ Route::get('/user', function (Request $request) {
 
 Route::apiResource("posts",PostController::class);
 Route::apiResource("employers",EmployerController::class);
+Route::get("getApp/{post_id}",[EmployerController::class,"getApplications"]);
