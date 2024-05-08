@@ -5,6 +5,8 @@ namespace App\Http\Controllers\API;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Post;
+use App\Models\Candidate;
+
 use App\Http\Resources\PostResource;
 class AdminController extends Controller
 {
@@ -56,6 +58,10 @@ class AdminController extends Controller
         $post->status = 'approved';
         $post->save();
         return response()->json(['message' => 'Post updated successfully'], 200);
+    }
+    public function getCandidates(){
+        $candidates = Candidate::withCount('applications')->with('applications')->get();
+        return response()->json(['candidates' => $candidates], 200);
     }
     
 
