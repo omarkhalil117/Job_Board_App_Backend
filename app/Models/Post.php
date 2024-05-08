@@ -15,7 +15,12 @@ class Post extends Model
     {
         return $this->belongsToMany(Skill::class, 'post_skill');
     }
+  
     function applications(){
         return $this->hasMany(Application::class);
+
+    function employer()
+    {
+        return $this->belongsTo(Employer::class, 'employer_id');
     }
 }

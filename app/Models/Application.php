@@ -14,4 +14,9 @@ class Application extends Model
     public function post(){
         return $this->belongsTo(Post::class);
     }
+
+    protected $fillable =['status'];
+    
+ 
+
 }

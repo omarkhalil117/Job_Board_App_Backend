@@ -3,8 +3,17 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
-use App\Models\Employer;
 use Illuminate\Http\Request;
+
+use App\Models\Employer;
+use App\Models\User;
+use App\Models\Post;
+
+use App\Models\Application;
+use App\Http\Resources\EmployerResource;
+use App\Http\Requests\UpdateUserRequest;
+use App\Http\Resources\PostResource;
+
 
 class EmployerController extends Controller
 {
@@ -13,7 +22,9 @@ class EmployerController extends Controller
      */
     public function index()
     {
-        //
+        $employers = Employer::with('user')->get();
+        return response()->json(["status" => "success", "data" => EmployerResource::collection($employers)]);
+
     }
 
     /**
@@ -22,6 +33,8 @@ class EmployerController extends Controller
     public function store(Request $request)
     {
         //
+        return response()->json(["status" => "success", "message" => "Employer created successfully"]);
+
     }
 
     /**
@@ -29,15 +42,27 @@ class EmployerController extends Controller
      */
     public function show(Employer $employer)
     {
-        //
+        $employers = Employer::with('user')->findOrFail($employer->id);
+        return response()->json(["status" => "success", "data" => new EmployerResource($employer)]);
+
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Employer $employer)
+    public function update(UpdateUserRequest $request, Employer $employer)
     {
-        //
+
+        $user_id = $employer->user->id;
+        $user = User::findOrFail($user_id);
+      
+        $request_parms = $request->all();
+        
+        $user->update($request_parms);
+        $employer->update($request_parms);
+        
+        return response()->json(["status" => "success", "data" => new EmployerResource($employer)]);
+
     }
 
     /**
@@ -46,5 +71,25 @@ class EmployerController extends Controller
     public function destroy(Employer $employer)
     {
         //
+        return response()->json(["status" => "success", "message" => "Employer deleted successfully"]);
+
     }
+    public function getApplications( string $post_id ){
+        $post = new PostResource(Post::find($post_id));
+        $apps = Application::where("post_id",$post_id)->with("candidate")->get();
+        return response()->json(["status" => "success", "post" => $post, "applications" => $apps]);
+
+    }
+    public function approveApplication(Request $request, string $application_id)
+    {
+        $application = Application::find($application_id);
+        
+        if ($application) {
+            $application->update(['status' =>$request['status']]);
+            return response()->json(["message" => "Application approved successfully"],200);
+        } else {
+            return response()->json(["message" => "Application not found"], 404);
+        }
+    }
+
 }
