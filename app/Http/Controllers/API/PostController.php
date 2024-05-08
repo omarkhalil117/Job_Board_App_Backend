@@ -3,9 +3,10 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
-use App\Models\Job;
 use Illuminate\Http\Request;
 
+use App\Models\Post;
+use App\Http\Resources\PostResource;
 class PostController extends Controller
 {
     /**
@@ -13,7 +14,8 @@ class PostController extends Controller
      */
     public function index()
     {
-        //
+        $posts = Post::with('skills')->get();
+        return  PostResource::collection($posts);    
     }
 
     /**
