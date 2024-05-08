@@ -5,7 +5,7 @@ namespace App\Http\Controllers\API;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Post;
-
+use App\Http\Resources\PostResource;
 class AdminController extends Controller
 {
     /**
@@ -14,11 +14,12 @@ class AdminController extends Controller
 
      public function getApprovedJobs(){
         $posts = Post::where('status', 'approved')->get(); 
-        return response()->json(['posts' => $posts], 200);
+        return  PostResource::collection($posts);
     }
     public function getPendingJobs(){
         $posts = Post::where('status', 'pending')->get(); 
         return response()->json(['posts' => $posts], 200);
+        return  PostResource::collection($posts);
     }
     
     public function index()
@@ -45,10 +46,12 @@ class AdminController extends Controller
     /**
      * Update the specified resource in storage.
      */
+    
     public function update(Request $request, string $id)
     {
-        //
+
     }
+    
 
     /**
      * Remove the specified resource from storage.
