@@ -49,7 +49,13 @@ class AdminController extends Controller
     
     public function update(Request $request, string $id)
     {
-
+        $post = Post::find($id);
+        if (!$post) {
+            return response()->json(['message' => 'Post not found'], 404);
+        }
+        $post->status = 'approved';
+        $post->save();
+        return response()->json(['message' => 'Post updated successfully'], 200);
     }
     
 

@@ -9,3 +9,4 @@ Route::get('/user', function (Request $request) {
 
 Route::get('admin/approvedjobs', [AdminController::class, 'getApprovedJobs']);
 Route::get('admin/pendingjobs', [AdminController::class, 'getPendingJobs']);
+Route::put('admin/approve/{id}', [AdminController::class, 'update']);
