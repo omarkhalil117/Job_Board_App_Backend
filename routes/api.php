@@ -12,3 +12,5 @@ Route::get('/user', function (Request $request) {
 
 Route::apiResource("posts",PostController::class);
 Route::apiResource("employers",EmployerController::class);
+Route::get("job-applications/{post_id}",[EmployerController::class,"getApplications"]);
+Route::put("application-approval/{application_id}",[EmployerController::class,"approveApplication"]);

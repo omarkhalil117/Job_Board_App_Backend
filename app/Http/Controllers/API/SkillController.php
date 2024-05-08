@@ -3,9 +3,10 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
-use App\Models\Skill;
 use Illuminate\Http\Request;
 
+use App\Models\Skill;
+use App\Http\Resources\SkillResource;
 class SkillController extends Controller
 {
     /**
@@ -13,7 +14,8 @@ class SkillController extends Controller
      */
     public function index()
     {
-        //
+        $skills = Skill::all();
+        return  SkillResource::collection($skills);
     }
 
     /**
