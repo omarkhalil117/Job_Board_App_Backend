@@ -52,11 +52,7 @@ class AdminController extends Controller
     public function update(Request $request, string $id)
     {
         $post = Post::findorFail($id);
-
-
-        $post->status = $request['status'];
-
-        $post->save();
+        $post->update(['status' =>$request['status']]);
         return response()->json(['message' => 'Post updated successfully'], 200);
     }
     public function getCandidates(){

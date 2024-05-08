@@ -8,7 +8,9 @@ use Illuminate\Database\Eloquent\Model;
 class Post extends Model
 {
     use HasFactory;
-
+    protected $fillable = [
+        'status',
+    ];
     function skills()
     {
         return $this->belongsToMany(Skill::class, 'post_skill');
