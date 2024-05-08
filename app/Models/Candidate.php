@@ -18,7 +18,7 @@ class Candidate extends Model
     {
         return $this->belongsToMany(Skill::class , 'candidate_skill');
     }
-    
+
     public function applications(){
         return $this->hasMany(Application::class);
     }
