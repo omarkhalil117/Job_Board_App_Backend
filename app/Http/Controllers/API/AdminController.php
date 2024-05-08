@@ -4,12 +4,23 @@ namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use App\Models\Post;
 
 class AdminController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
+
+     public function getApprovedJobs(){
+        $posts = Post::where('status', 'approved')->get(); 
+        return response()->json(['posts' => $posts], 200);
+    }
+    public function getPendingJobs(){
+        $posts = Post::where('status', 'pending')->get(); 
+        return response()->json(['posts' => $posts], 200);
+    }
+    
     public function index()
     {
         //
