@@ -9,6 +9,8 @@ class Employer extends Model
 {
     use HasFactory;
 
+    protected $fillable = ['company_name', 'logo'];
+
     public function user()
     {
         return $this->morphOne(User::class, 'userable');
