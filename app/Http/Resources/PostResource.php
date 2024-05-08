@@ -20,7 +20,8 @@ class PostResource extends JsonResource
         // return parent::toArray($request);
         return [
             'id'=> $this->id,
-            'employer_id'=> $this->employer_id,
+            'company_logo'=> $this->employer->logo,
+            'company_name'=> $this->employer->company_name,
             'job_title'=>$this->job_title,
             'description'=>$this->description,
             'responsibilities'=>$this->responsibilities,

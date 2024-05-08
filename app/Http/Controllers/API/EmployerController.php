@@ -66,9 +66,21 @@ class EmployerController extends Controller
     {
         //
     }
-    public function getApplications(string $post_id ){
+    public function getApplications( string $post_id ){
         $post = new PostResource(Post::find($post_id));
         $apps = Application::where("post_id",$post_id)->with("candidate")->get();
         return response()->json(["post" => $post, "applications" => $apps]) ;
     }
+    public function approveApplication(Request $request, string $application_id)
+    {
+        $application = Application::find($application_id);
+        
+        if ($application) {
+            $application->update(['status' =>$request['status']]);
+            return response()->json(["message" => "Application approved successfully"],200);
+        } else {
+            return response()->json(["message" => "Application not found"], 404);
+        }
+    }
+
 }

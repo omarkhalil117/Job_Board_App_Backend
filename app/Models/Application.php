@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class Application extends Model
 {
     use HasFactory;
+    protected $fillable =['status'];
     
     public function candidate(){
         return $this->belongsTo(Candidate::class);

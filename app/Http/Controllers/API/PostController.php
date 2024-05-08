@@ -14,7 +14,7 @@ class PostController extends Controller
      */
     public function index()
     {
-        $posts = Post::with('skills')->get();
+        $posts = Post::with('skills', 'employer')->get();
         return  PostResource::collection($posts);    
     }
 
