@@ -65,5 +65,11 @@ class PostController extends Controller
         $posts = Post::onlyTrashed()->get();
         return response()->json(["status" => "success", "data" => PostResource::collection($posts)]);
     }
+    public function restorePost(string $id){
+        $post = Post::withTrashed()->find($id);
+        $post->restore();
+        return response()->json(["status" => "success", "message" => "Post restored successfully"]);
+    }
+
 
 }

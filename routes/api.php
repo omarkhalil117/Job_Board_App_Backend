@@ -17,6 +17,7 @@ Route::get('admin/pendingjobs', [AdminController::class, 'getPendingJobs']);
 Route::put('admin/approve/{id}', [AdminController::class, 'update']);
 Route::get('admin/candidates', [AdminController::class, 'getCandidates']);
 Route::get("posts/deleted", [PostController::class, 'deletedPosts']);
+Route::get('posts/restore/{id}', [PostController::class, 'restorePost']);
 Route::apiResource("posts",PostController::class);
 
 Route::apiResource("employers",EmployerController::class);
