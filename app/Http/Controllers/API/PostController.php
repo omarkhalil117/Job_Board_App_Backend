@@ -70,6 +70,12 @@ class PostController extends Controller
         $post->restore();
         return response()->json(["status" => "success", "message" => "Post restored successfully"]);
     }
+    public function forceDelete(string $id){
+        $post = Post::withTrashed()->find($id);
+        $post->forceDelete();
+        return response()->json(["status" => "success", "message" => "Post deleted permanently"]);
+        
+    }
 
 
 }
