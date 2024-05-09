@@ -61,5 +61,9 @@ class PostController extends Controller
         return response()->json(["status" => "success", "message" => "Post deleted successfully"]);
 
     }
+    public function deletedPosts(){
+        $posts = Post::onlyTrashed()->get();
+        return response()->json(["status" => "success", "data" => PostResource::collection($posts)]);
+    }
 
 }
