@@ -5,6 +5,8 @@ namespace App\Http\Controllers\API;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Http\Requests\UpdatePostRequest;
+use App\Http\Requests\StorePostRequest;
+
 
 use App\Models\Post;
 use App\Http\Resources\PostResource;
@@ -22,10 +24,29 @@ class PostController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(StorePostRequest $request)
     {
-        return response()->json(["status" => "success", "message" => "Post created successfully"]);
-
+        $validatedData = $request->validated();
+    
+        // $validatedData['employer_id'] = auth()->user()->id;
+        $validatedData['employer_id'] = 1;
+        $validatedData['status'] = "pending";
+    
+        try {
+            $post = Post::create($validatedData);
+    
+            return response()->json([
+                "status" => "success",
+                "message" => "Post created successfully",
+                "post" => $post
+            ], 201);
+        } catch (\Exception $e) {
+            return response()->json([
+                "status" => "error",
+                "message" => "Failed to create post",
+                "error" => $e->getMessage()
+            ], 500);
+        }
     }
 
     /**
