@@ -9,6 +9,15 @@ class Post extends Model
 {
     use HasFactory;
     protected $fillable = [
+        'job_title',
+        'description',
+        'responsibilities',
+        'qualifications',
+        'start_salary',
+        'end_salary',
+        'location',
+        'work_type',
+        'application_deadline',
         'status',
     ];
     function skills()
