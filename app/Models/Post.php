@@ -10,6 +10,7 @@ class Post extends Model
     use HasFactory;
     use SoftDeletes;
     protected $fillable = [
+        'employer_id',
         'job_title',
         'description',
         'responsibilities',
