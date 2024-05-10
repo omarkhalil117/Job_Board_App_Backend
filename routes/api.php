@@ -14,6 +14,7 @@ Route::get('/user', function (Request $request) {
 
 Route::get('admin/approvedjobs', [AdminController::class, 'getApprovedJobs']);
 Route::get('admin/pendingjobs', [AdminController::class, 'getPendingJobs']);
+Route::get('admin/rejectedjobs', [AdminController::class, 'getRejectedJobs']);
 Route::put('admin/approve/{id}', [AdminController::class, 'update']);
 Route::get('admin/candidates', [AdminController::class, 'getCandidates']);
 
