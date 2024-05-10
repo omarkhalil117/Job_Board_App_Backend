@@ -5,6 +5,9 @@ namespace App\Http\Controllers\API;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
+use Illuminate\Support\Facades\DB;
+
+
 use App\Models\Employer;
 use App\Models\User;
 use App\Models\Post;
@@ -52,17 +55,31 @@ class EmployerController extends Controller
      */
     public function update(UpdateUserRequest $request, Employer $employer)
     {
-
-        $user_id = $employer->user->id;
-        $user = User::findOrFail($user_id);
-      
-        $request_parms = $request->all();
-        
-        $user->update($request_parms);
-        $employer->update($request_parms);
-        
-        return response()->json(["status" => "success", "data" => new EmployerResource($employer)]);
-
+        try {
+            DB::beginTransaction();
+    
+            // Update the user
+            $user = $employer->user;
+            $user->update($request->all());
+    
+            // Update the employer
+            $employer->update($request->all());
+    
+            DB::commit();
+    
+            return response()->json([
+                "status" => "success",
+                "data" => new EmployerResource($employer)
+            ]);
+        } catch (\Exception $e) {
+            DB::rollBack();
+    
+            return response()->json([
+                "status" => "error",
+                "message" => "Failed to update user and employer",
+                "error" => $e->getMessage()
+            ], 500);
+        }
     }
 
     /**
