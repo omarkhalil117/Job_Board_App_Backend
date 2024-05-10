@@ -67,8 +67,10 @@ class PostController extends Controller
     public function update(UpdatePostRequest $request, Post $post)
     {
         $request_parms = $request->all();
+        $skills = $request_parms['skills'];
         $request_parms['status'] = $post->status;
         $updated_post =$post->update($request_parms);
+        $post->skills()->sync($skills);
         if ($updated_post) {
             return response()->json(["status" => "success", "data" => new PostResource($post)]);
         } else {
