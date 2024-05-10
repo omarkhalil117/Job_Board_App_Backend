@@ -32,6 +32,7 @@ class StorePostRequest extends FormRequest
             'location' => ['required'],
             'work_type' => ['required', Rule::in(['remote', 'on-site', 'hybrid'])],
             'application_deadline' => ['required', 'date'],
+            'skills' => [ 'required' ,'string', 'exists:skills,id'],
             
         ];
     }
@@ -50,6 +51,9 @@ class StorePostRequest extends FormRequest
             'work_type.in' => 'The selected work type is invalid.',
             'application_deadline.required' => 'The application deadline field is required.',
             'application_deadline.date' => 'The application deadline must be a valid date.',
+            'skills.required' => 'At least one skill is required.',
+            'skills.exists' => 'One or more selected skills do not exist.',
+           
         ];
     }
 }

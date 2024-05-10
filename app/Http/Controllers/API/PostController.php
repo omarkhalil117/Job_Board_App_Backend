@@ -8,6 +8,9 @@ use App\Http\Requests\UpdatePostRequest;
 use App\Http\Requests\StorePostRequest;
 use App\Models\Post;
 use App\Http\Resources\PostResource;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\HttpKernel\Exception;
+
 class PostController extends Controller
 {
 
@@ -21,18 +24,25 @@ class PostController extends Controller
     public function store(StorePostRequest $request)
     {
         $validatedData = $request->validated();
+        
     
         // $validatedData['employer_id'] = auth()->user()->id;
         $validatedData['employer_id'] = 1;
         $validatedData['status'] = "pending";
+
+        $post_skills=$validatedData['skills'];
     
         try {
             $post = Post::create($validatedData);
+
+            $postSkillIds = explode(',', $post_skills);
+
+            $post->skills()->attach($postSkillIds);
     
             return response()->json([
                 "status" => "success",
                 "message" => "Post created successfully",
-                "post" => $post
+                "post" => $post,
             ], 201);
         } catch (\Exception $e) {
             return response()->json([
@@ -45,13 +55,12 @@ class PostController extends Controller
 
     /**
      * Display the specified resource.
-     */
-    public function show(Job $job)
-    {
-        return response()->json(["status" => "success", "data" => new PostResource($job)]);
-
-    }
-
+     */public function show(Post $post)
+         {
+        $post = Post::with('skills', 'employer')->findOrFail($post->id);
+        return response()->json(["status" => "success", "data" => $post]);
+        }
+        
     /**
      * Update the specified resource in storage.
      */
