@@ -32,7 +32,7 @@ class PostController extends Controller
      */
     public function show(Post $post)
     {
-        return response()->json(["status" => "success", "data" => new PostResource($job)]);
+        return response()->json(["status" => "success", "data" => new PostResource($post)]);
 
     }
 
@@ -41,7 +41,7 @@ class PostController extends Controller
      */
     public function update(Request $request, Post $post)
     {
-        return response()->json(["status" => "success", "data" => new PostResource($job)]);
+        return response()->json(["status" => "success", "data" => new PostResource($post)]);
 
     }
 
