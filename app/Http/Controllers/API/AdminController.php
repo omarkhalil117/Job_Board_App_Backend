@@ -15,15 +15,27 @@ class AdminController extends Controller
      */
 
      public function getApprovedJobs(){
-        $posts = Post::where('status', 'approved')->withCount('applications')->get();
+
+        $perPage = request()->query('perPage', 10);
+        $posts = Post::where('status', 'approved')->withCount('applications')->paginate($perPage);
 
         return  PostResource::collection($posts);
     }
     public function getPendingJobs(){
-        $posts = Post::where('status', 'pending')->get(); 
+
+        $perPage = request()->query('perPage', 10);
+        $posts = Post::where('status', 'pending')->paginate($perPage); 
         return  PostResource::collection($posts);
     }
     
+
+    public function getRejectedJobs(Request $request)
+    {
+        $perPage = $request->query('perPage', 10);
+        $posts = Post::where('status', 'rejected')->paginate($perPage);
+
+        return PostResource::collection($posts);
+    }
     public function index()
     {
         //
