@@ -11,7 +11,7 @@ class StoreCandidateRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -22,7 +22,27 @@ class StoreCandidateRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'resume' => 'required',
+            'education' => 'required',
+            'faculty' => 'required',
+            'city' => 'required',
+            'experience_level' => 'required',
+        ];
+    }
+
+    /**
+     * Get the error messages for the defined validation rules.
+     *
+     * @return array<string, string>
+     */
+    public function messages(): array
+    {
+        return [
+            'resume.required' => 'A resume is required',
+            'education.required' => 'Education is required',
+            'faculty.required' => 'Faculty is required',
+            'city.required' => 'City is required',
+            'experience_level.required' => 'Experience level is required',
         ];
     }
 }

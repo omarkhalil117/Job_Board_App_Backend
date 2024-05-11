@@ -3,8 +3,11 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\StoreCandidateRequest;
+use App\Http\Resources\CandidateResource;
 use App\Models\Candidate;
 use Illuminate\Http\Request;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 
 class CandidateController extends Controller
 {
@@ -13,13 +16,15 @@ class CandidateController extends Controller
      */
     public function index()
     {
-        //
+        $candidates = Candidate::all();
+
+        return CandidateResource::collection($candidates);
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(StoreCandidateRequest $request)
     {
         //
     }
@@ -29,7 +34,8 @@ class CandidateController extends Controller
      */
     public function show(Candidate $candidate)
     {
-        //
+        $result = Candidate::with('user')->findOrFail($candidate->id);
+        return response()->json(["status" => "success", "data" => new CandidateResource($result)]);
     }
 
     /**
@@ -37,7 +43,11 @@ class CandidateController extends Controller
      */
     public function update(Request $request, Candidate $candidate)
     {
-        //
+        try {
+            // My code...
+        } catch (\Exception $e) {
+            throw new HttpException(500, $e->getMessage());
+        }
     }
 
     /**
@@ -45,6 +55,16 @@ class CandidateController extends Controller
      */
     public function destroy(Candidate $candidate)
     {
-        //
+        return response()->json(["status" => "success", "message" => "Candidate deleted successfully"]);
+    }
+
+    public function appliedApplications(Request $request, string $id) {
+        $candidateApplications = Candidate::findOrFail($id);
+        // return CandidateResource::collection($candidateApplications);
+        return response()->json($candidateApplications->applications);
+    }
+
+    public function applyToPost(Request $request) {
+
     }
 }

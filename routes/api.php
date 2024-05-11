@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use \App\Http\Controllers\API\AdminController;
+use App\Http\Controllers\API\CandidateController;
 use App\Http\Controllers\API\PostController ;
 use App\Http\Controllers\API\EmployerController ;
 
@@ -21,3 +22,7 @@ Route::apiResource("posts",PostController::class);
 Route::apiResource("employers",EmployerController::class);
 Route::get("job-applications/{post_id}",[EmployerController::class,"getApplications"]);
 Route::put("application-approval/{application_id}",[EmployerController::class,"approveApplication"]);
+
+// Candidate Routes
+Route::apiResource("candidates", CandidateController::class);
+Route::get("candidates/{id}/applications", [CandidateController::class, "appliedApplications"]);
