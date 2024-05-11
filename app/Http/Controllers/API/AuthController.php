@@ -4,7 +4,9 @@ namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
 use App\Http\Middleware\CheckUserRole;
+use App\Http\Requests\StoreCandidateRequest;
 use App\Http\Requests\StoreEmployerRequest;
+use App\Models\Candidate;
 use App\Models\Employer;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -13,65 +15,29 @@ use Illuminate\Support\Facades\Hash;
 class AuthController extends Controller
 {
 
-   public function __construct()
+    public function empRegister(StoreEmployerRequest $request)
     {
-       $this->middleware('auth:sanctum');
-      
-    }
-    public function index()
-    {
-        $user = User::all();
-        return $user;
-    
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store()
-    {
-       
-    }
-
-    public function specifyRole($request, $role) {
-        $currentRequestPersonalAccessToken = \Laravel\Sanctum\PersonalAccessToken::findToken($request->bearerToken());
-        if ($currentRequestPersonalAccessToken) {
-            $userRole = $currentRequestPersonalAccessToken->tokenable->role;
-            var_dump($role,$userRole);
-            if ($role !== $userRole) {
-                return "You are not $userRole to access that! 😏";
-            }
-        } else {
-            return "You must send token";
-        }
-        return 'Matched';
-    }
-
-    public function storeEmp(StoreEmployerRequest $request)
-    {
-        // Validate the incoming request data
         $validatedData = $request->validated();
         
-        // Create the employer
         $employer = new Employer([
             'company_name' => $validatedData['company_name'],
             'logo' => $validatedData['logo'],
         ]);
         
-        // Save the employer
+    
         $employer->save();
         
-        // Create the user associated with the employer
+   
         $user = new User([
             'name' => $validatedData['user']['name'],
             'email' => $validatedData['user']['email'],
             'password' => bcrypt($validatedData['user']['password']),
             'username' => $validatedData['user']['username'],
             'image' => $validatedData['user']['image'] ?? null,
-            'role' => 'admin', // Assign the role here
+            'role' => 'employer', 
         ]);
         
-        // Associate the user with the employer
+
         $employer->user()->save($user);
     
         return response()->json([
@@ -80,28 +46,44 @@ class AuthController extends Controller
             'token' => $user->createToken("API TOKEN")->plainTextToken
         ], 200);
     }
+
+    public function candidateRegister(StoreCandidateRequest $request)
+    {
+        $validatedData = $request->validated();
+        
+
+        $candidate = new Candidate([
+            'resume' => $validatedData['resume'],
+            'education' => $validatedData['education'],
+            'faculty' => $validatedData['faculty'],
+            'city' => $validatedData['city'],
+            'experience_level' => $validatedData['experience_level'],
+            'linkedin' => $validatedData['linkedin'] ?? null,
+            'github' => $validatedData['github'] ?? null,
+        ]);
+
+
+        $candidate->save();
     
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        //
-    }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
-    {
-        //
+        $user = new User([
+            'name' => $validatedData['user']['name'],
+            'email' => $validatedData['user']['email'],
+            'password' => bcrypt($validatedData['user']['password']),
+            'username' => $validatedData['user']['username'],
+            'image' => $validatedData['user']['image'] ?? null,
+            'role' => 'candidate',
+        ]);
+    
+      
+        $candidate->user()->save($user);
+    
+        return response()->json([
+            'status' => true,
+            'message' => 'Candidate Created Successfully',
+            'token' =>  $token = $user->createToken("API TOKEN")->plainTextToken
+        ], 200);
     }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
-    }
+    
+    
 }

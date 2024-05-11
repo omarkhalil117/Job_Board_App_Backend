@@ -27,7 +27,8 @@ Route::apiResource("employers",EmployerController::class)->middleware('role:any'
 Route::get("job-applications/{post_id}",[EmployerController::class,"getApplications"])->middleware('role:any');  
 Route::put("application-approval/{application_id}",[EmployerController::class,"approveApplication"])->middleware('role:any');  
 
-Route::post('/auth/EmpRegister', [AuthController::class, 'storeEmp'])->middleware('role:any');  
+Route::post('/auth/EmpRegister', [AuthController::class, 'empRegister'])->middleware('role:any');  
+Route::post('/auth/candidateRegister', [AuthController::class, 'candidateRegister'])->middleware('role:any');  
 Route::get('/auth/index', [AuthController::class, 'index'])->middleware('role:employer,admin');  
 Route::post('/sanctum/token', function (Request $request) {
     $request->validate([

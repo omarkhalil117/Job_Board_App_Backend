@@ -11,7 +11,7 @@ class StoreCandidateRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -22,7 +22,18 @@ class StoreCandidateRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'resume' => ['required', 'string'],
+            'education' => ['required', 'string'],
+            'faculty' => ['required', 'string'],
+            'city' => ['required', 'string'],
+            'experience_level' => ['required', 'string', 'in:junior,mid-senior,senior,manager,team-lead'],
+            'linkedin' => 'nullable|url',
+            'github' => 'nullable|url',
+            'user.name' => ['required', 'string'],
+            'user.email' => ['required', 'email', 'unique:users,email'],
+            'user.password' => ['required', 'string', 'min:6'],
+            'user.username' => ['required', 'string', 'unique:users,username'],
+            'user.image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ];
     }
 }

@@ -9,7 +9,7 @@ use Laravel\Sanctum\HasApiTokens;
 class Candidate extends Model
 {
     use HasFactory, HasApiTokens;
-
+    protected $fillable = ['resume','education','faculty','city','experience_level', 'linkedin','github'];
     public function user()
     {
         return $this->morphOne(User::class, 'userable');
