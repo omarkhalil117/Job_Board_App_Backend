@@ -16,6 +16,7 @@ class EnsureUserHasRole
      */
     public function handle(Request $request, Closure $next, ... $roles): Response
     {
+        // Allow any one.
         if (in_array("any", $roles)) {
             return $next($request);
         }
@@ -23,7 +24,7 @@ class EnsureUserHasRole
             return response()->json(['error' => 'Unauthenticated'], 401);
         }
 
-        // Check if the user's role is in the allowed roles
+        // Check if the user's role is in the allowed roles.
         if (!in_array($request->user()->role, $roles)) {
             return response()->json(['error' => 'Unauthorized'], 403);
         }
