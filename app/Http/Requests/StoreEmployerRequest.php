@@ -22,8 +22,8 @@ class StoreEmployerRequest extends FormRequest
     public function rules()
     {
         return [
-            'company_name' => 'required|string|max:255',
-            'logo' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'company_name' => 'string|max:255',
+            'logo' => 'image|mimes:jpeg,png,jpg,gif|max:2048',
             'user.name' => 'required|string|max:255',
             'user.email' => 'required|email|unique:users,email,NULL,id,userable_type,App\Models\Employer',
             'user.password' => 'required|string|min:8|confirmed',

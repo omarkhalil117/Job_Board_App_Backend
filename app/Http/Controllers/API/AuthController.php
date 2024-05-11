@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
+use App\Http\Middleware\CheckUserRole;
 use App\Http\Requests\StoreEmployerRequest;
 use App\Models\Employer;
 use App\Models\User;
@@ -11,14 +12,17 @@ use Illuminate\Support\Facades\Hash;
 
 class AuthController extends Controller
 {
+
    public function __construct()
     {
-        $this->middleware('auth');
-        $this->middleware('role:admin');
+       $this->middleware('auth:sanctum');
+      
     }
     public function index()
     {
-        //
+        $user = User::all();
+        return $user;
+    
     }
 
     /**
@@ -28,6 +32,21 @@ class AuthController extends Controller
     {
        
     }
+
+    public function specifyRole($request, $role) {
+        $currentRequestPersonalAccessToken = \Laravel\Sanctum\PersonalAccessToken::findToken($request->bearerToken());
+        if ($currentRequestPersonalAccessToken) {
+            $userRole = $currentRequestPersonalAccessToken->tokenable->role;
+            var_dump($role,$userRole);
+            if ($role !== $userRole) {
+                return "You are not $userRole to access that! 😏";
+            }
+        } else {
+            return "You must send token";
+        }
+        return 'Matched';
+    }
+
     public function storeEmp(StoreEmployerRequest $request)
     {
         // Validate the incoming request data
@@ -49,7 +68,7 @@ class AuthController extends Controller
             'password' => bcrypt($validatedData['user']['password']),
             'username' => $validatedData['user']['username'],
             'image' => $validatedData['user']['image'] ?? null,
-            'role' => 'employer', // Assign the role here
+            'role' => 'admin', // Assign the role here
         ]);
         
         // Associate the user with the employer
