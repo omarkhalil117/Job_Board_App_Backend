@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Http\Middleware\CheckUserRole;
 use App\Http\Requests\StoreCandidateRequest;
 use App\Http\Requests\StoreEmployerRequest;
+use App\Http\Resources\CandidateResource;
+use App\Http\Resources\EmployerResource;
 use App\Http\Resources\UserResource;
 use App\Models\Candidate;
 use App\Models\Employer;
@@ -98,7 +100,25 @@ class AuthController extends Controller
      
     public function getUserData(Request $request){
         $user = $request->user();
-        return new UserResource($user);
+
+        if ($user->role == "admin") {
+             return new UserResource($user);
+        }
+        elseif ($user->role == "employer") {
+            $employer = Employer::find($user->userable_id);
+            
+            if ($employer) {
+                return new EmployerResource($employer);
+            } 
+        } elseif ($user->role == "candidate") {
+            $candidate = Candidate::find($user->userable_id);
+           // new CandidateResource($candidate);
+            if ($candidate) {
+                return new CandidateResource($candidate);
+            }
+        } else {
+            return response()->json(['error' => 'Invalid user role'], 400);
+        }
     }
 
 }
