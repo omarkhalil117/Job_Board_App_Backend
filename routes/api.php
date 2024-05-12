@@ -6,6 +6,7 @@ use \App\Http\Controllers\API\AdminController;
 use App\Http\Controllers\API\AuthController;
 use App\Http\Controllers\API\PostController ;
 use App\Http\Controllers\API\EmployerController ;
+use App\Http\Controllers\API\SkillController ;
 use App\Models\User;
 use Dotenv\Exception\ValidationException;
 use Illuminate\Support\Facades\Hash;
@@ -26,7 +27,7 @@ Route::get("posts/deleted", [PostController::class, 'deletedPosts'])->middleware
 Route::get('posts/restore/{id}', [PostController::class, 'restorePost'])->middleware('role:any'); 
 Route::delete('posts/force-delete/{id}', [PostController::class, 'forceDelete'])->middleware('role:any'); 
 Route::apiResource("posts",PostController::class)->middleware('role:any');
-
+Route::apiResource("skills",SkillController::class);
 // Employer
 Route::apiResource("employers",EmployerController::class)->middleware('role:any'); 
 Route::get("job-applications/{post_id}",[EmployerController::class,"getApplications"])->middleware('role:any');  
