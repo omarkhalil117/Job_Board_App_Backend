@@ -42,7 +42,7 @@ class EmployerController extends Controller
      */
     public function show(Employer $employer)
     {
-        $employers = Employer::with('user')->findOrFail($employer->id);
+        $employers = Employer::with('user', 'posts')->findOrFail($employer->id);
         return response()->json(["status" => "success", "data" => new EmployerResource($employer)]);
 
     }
