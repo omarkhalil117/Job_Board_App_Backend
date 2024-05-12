@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Middleware\CheckUserRole;
 use App\Http\Requests\StoreCandidateRequest;
 use App\Http\Requests\StoreEmployerRequest;
+use App\Http\Resources\UserResource;
 use App\Models\Candidate;
 use App\Models\Employer;
 use App\Models\User;
@@ -95,9 +96,9 @@ class AuthController extends Controller
         return $user->createToken($request->device_name)->plainTextToken;
     }
      
-    public function getUserData(Request $request)
-    {
-        return $request->user();
+    public function getUserData(Request $request){
+        $user = $request->user();
+        return new UserResource($user);
     }
-     
+
 }
