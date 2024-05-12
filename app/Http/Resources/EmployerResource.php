@@ -20,6 +20,7 @@ class EmployerResource extends JsonResource
         // return parent::toArray($request);
         return [
             'id' => $this->id,
+            'role'=>$this->user->role,
             'company_name'=>$this->company_name,
             'company_logo'=>$this->logo,
             'user_id'=>$this->user->id,

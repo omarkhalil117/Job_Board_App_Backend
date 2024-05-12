@@ -22,27 +22,18 @@ class StoreCandidateRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'resume' => 'required',
-            'education' => 'required',
-            'faculty' => 'required',
-            'city' => 'required',
-            'experience_level' => 'required',
-        ];
-    }
-
-    /**
-     * Get the error messages for the defined validation rules.
-     *
-     * @return array<string, string>
-     */
-    public function messages(): array
-    {
-        return [
-            'resume.required' => 'A resume is required',
-            'education.required' => 'Education is required',
-            'faculty.required' => 'Faculty is required',
-            'city.required' => 'City is required',
-            'experience_level.required' => 'Experience level is required',
+            'resume' => ['required', 'file', 'mimes:pdf,doc,docx'], 
+            'education' => ['required', 'string'],
+            'faculty' => ['required', 'string'],
+            'city' => ['required', 'string'],
+            'experience_level' => ['required', 'string', 'in:junior,mid-senior,senior,manager,team-lead'],
+            'linkedin' => 'nullable|url',
+            'github' => 'nullable|url',
+            'user.name' => ['required', 'string'],
+            'user.email' => ['required', 'email', 'unique:users,email'],
+            'user.password' => ['required', 'string', 'min:6'],
+            'user.username' => ['required', 'string', 'unique:users,username'],
+            'user.image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ];
     }
 }
