@@ -35,14 +35,14 @@ class PostController extends Controller
         try {
             $post = Post::create($validatedData);
 
-            $postSkillIds = explode(',', $post_skills);
+            // $postSkillIds = explode(',', $post_skills);
 
-            $post->skills()->attach($postSkillIds);
+            $post->skills()->attach($post_skills);
     
             return response()->json([
                 "status" => "success",
                 "message" => "Post created successfully",
-                "post" => $post,
+                "post" => new PostResource($post),
             ], 201);
         } catch (\Exception $e) {
             return response()->json([
