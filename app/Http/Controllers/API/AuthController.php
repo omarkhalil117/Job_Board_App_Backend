@@ -15,8 +15,7 @@ use Illuminate\Support\Facades\Hash;
 class AuthController extends Controller
 {
 
-    public function empRegister(StoreEmployerRequest $request)
-    {
+    public function empRegister(StoreEmployerRequest $request){
         $validatedData = $request->validated();
         
         $employer = new Employer([
@@ -47,11 +46,9 @@ class AuthController extends Controller
         ], 200);
     }
 
-    public function candidateRegister(StoreCandidateRequest $request)
-    {
+    public function candidateRegister(StoreCandidateRequest $request){
         $validatedData = $request->validated();
         
-
         $candidate = new Candidate([
             'resume' => $validatedData['resume'],
             'education' => $validatedData['education'],
@@ -62,9 +59,7 @@ class AuthController extends Controller
             'github' => $validatedData['github'] ?? null,
         ]);
 
-
         $candidate->save();
-    
 
         $user = new User([
             'name' => $validatedData['user']['name'],
@@ -75,7 +70,7 @@ class AuthController extends Controller
             'role' => 'candidate',
         ]);
     
-      
+
         $candidate->user()->save($user);
     
         return response()->json([
@@ -85,5 +80,24 @@ class AuthController extends Controller
         ], 200);
     }
     
-    
+    public function login(Request $request){
+        $request->validate([
+            'email' => 'required|email',
+            'password' => 'required',
+            'device_name' => 'required',
+        ]);
+     
+        $user = User::where('email', $request->email)->first();
+     
+        if (! $user || ! Hash::check($request->password, $user->password)) {
+            return response()->json(['error' => 'Unauthorized'], 401);
+        }
+        return $user->createToken($request->device_name)->plainTextToken;
+    }
+     
+    public function getUserData(Request $request)
+    {
+        return $request->user();
+    }
+     
 }

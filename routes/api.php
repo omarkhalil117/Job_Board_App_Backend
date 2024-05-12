@@ -13,9 +13,7 @@ use Illuminate\Support\Facades\Auth;
 
 use Laravel\Socialite\Facades\Socialite;
 
-Route::get('/user', function (Request $request) {
-    return $request->user();
-})->middleware('auth:sanctum');
+
 
 Route::get('admin/approvedjobs', [AdminController::class, 'getApprovedJobs'])->middleware('role:any');  
 Route::get('admin/pendingjobs', [AdminController::class, 'getPendingJobs'])->middleware('role:any');  
@@ -27,33 +25,12 @@ Route::apiResource("employers",EmployerController::class)->middleware('role:any'
 Route::get("job-applications/{post_id}",[EmployerController::class,"getApplications"])->middleware('role:any');  
 Route::put("application-approval/{application_id}",[EmployerController::class,"approveApplication"])->middleware('role:any');  
 
-Route::post('/auth/EmpRegister', [AuthController::class, 'empRegister'])->middleware('role:any');  
-Route::post('/auth/candidateRegister', [AuthController::class, 'candidateRegister'])->middleware('role:any');  
-Route::get('/auth/index', [AuthController::class, 'index'])->middleware('role:employer,admin');  
-Route::post('/sanctum/token', function (Request $request) {
-    $request->validate([
-        'email' => 'required|email',
-        'password' => 'required',
-        'device_name' => 'required',
-    ]);
- 
-    $user = User::where('email', $request->email)->first();
- 
-    if (! $user || ! Hash::check($request->password, $user->password)) {
-        return response()->json(['error' => 'Unauthorized'], 401);
-    }
+// Registeration
+Route::post('EmpRegister', [AuthController::class, 'empRegister'])->middleware('role:any');  
+Route::post('CandidateRegister', [AuthController::class, 'candidateRegister'])->middleware('role:any');  
 
-    // Create a token with custom claims
-    //$token = $user->createToken($request->device_name, [
-       // 'user' => [
-       //     'id' => $user->id,
-        //    'name' => $user->name,
-          //  'email' => $user->email,
-       //     'role' =>  $user->role
-            // Add any additional user data you want to include in the token
-        //]
-       
-    //])->plainTextToken;
-    return $user->createToken($request->device_name)->plainTextToken;
-    //return response()->json(['token' => $token]);
-})->middleware('role:any');  
+// Login
+Route::post('login', [AuthController::class, 'login'] )->middleware('role:any');  
+
+// Get user data from token
+Route::get('user', [AuthController::class, 'getUserData'] )->middleware('auth:sanctum');
