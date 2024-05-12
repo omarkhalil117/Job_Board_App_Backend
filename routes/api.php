@@ -14,18 +14,21 @@ use Illuminate\Support\Facades\Auth;
 use Laravel\Socialite\Facades\Socialite;
 
 
-
+// Admin APIS
 Route::get('admin/approvedjobs', [AdminController::class, 'getApprovedJobs'])->middleware('role:any');  
 Route::get('admin/pendingjobs', [AdminController::class, 'getPendingJobs'])->middleware('role:any');  
-Route::get('admin/rejectedjobs', [AdminController::class, 'getRejectedJobs']);
+Route::get('admin/rejectedjobs', [AdminController::class, 'getRejectedJobs'])->middleware('role:any'); 
 Route::put('admin/approve/{id}', [AdminController::class, 'update'])->middleware('role:any');  
-Route::get('admin/candidates', [AdminController::class, 'getCandidates'])->middleware('role:any');  
-Route::get("posts/deleted", [PostController::class, 'deletedPosts']);
-Route::get('posts/restore/{id}', [PostController::class, 'restorePost']);
-Route::delete('posts/force-delete/{id}', [PostController::class, 'forceDelete']);
-Route::apiResource("posts",PostController::class)->middleware('role:any');  
+Route::get('admin/candidates', [AdminController::class, 'getCandidates'])->middleware('role:any'); 
 
-Route::apiResource("employers",EmployerController::class)->middleware('role:any');  
+// Posts APIS 
+Route::get("posts/deleted", [PostController::class, 'deletedPosts'])->middleware('role:any'); 
+Route::get('posts/restore/{id}', [PostController::class, 'restorePost'])->middleware('role:any'); 
+Route::delete('posts/force-delete/{id}', [PostController::class, 'forceDelete'])->middleware('role:any'); 
+Route::apiResource("posts",PostController::class)->middleware('role:any');
+
+// Employer
+Route::apiResource("employers",EmployerController::class)->middleware('role:any'); 
 Route::get("job-applications/{post_id}",[EmployerController::class,"getApplications"])->middleware('role:any');  
 Route::put("application-approval/{application_id}",[EmployerController::class,"approveApplication"])->middleware('role:any');  
 
