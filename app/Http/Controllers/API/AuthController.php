@@ -162,3 +162,4 @@ class AuthController extends Controller
         return $fileUrl;
     }
 }
+
