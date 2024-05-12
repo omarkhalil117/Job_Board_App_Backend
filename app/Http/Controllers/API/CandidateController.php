@@ -43,11 +43,7 @@ class CandidateController extends Controller
      */
     public function update(Request $request, Candidate $candidate)
     {
-        try {
-            // My code...
-        } catch (\Exception $e) {
-            throw new HttpException(500, $e->getMessage());
-        }
+        return response()->json(["status" => "updated", "data" => $candidate]);
     }
 
     /**
