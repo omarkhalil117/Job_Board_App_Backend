@@ -15,7 +15,9 @@ class SkillResource extends JsonResource
     public function toArray(Request $request): array
     {
         // return parent::toArray($request);
-        return ['skill'=>$this->skill];
+        return [
+            'id'=>$this->id,
+            'skill'=>$this->skill];
 
         
     }

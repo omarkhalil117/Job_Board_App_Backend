@@ -5,6 +5,9 @@ namespace App\Http\Resources;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
+use App\Http\Resources\PostResource;
+
+
 class EmployerResource extends JsonResource
 {
     /**
@@ -23,7 +26,8 @@ class EmployerResource extends JsonResource
             'name'=>$this->user->name,
             'email'=>$this->user->email,
             'username'=>$this->user->username,
-            'image'=>$this->user->image
+            'image'=>$this->user->image,
+            'posts'=>PostResource::collection($this->posts)
         ];
     }
 }
