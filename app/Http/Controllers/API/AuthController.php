@@ -22,10 +22,12 @@ class AuthController extends Controller
     public function empRegister(StoreEmployerRequest $request){
 
         $validatedData = $request->validated();
+
+        $logo = $this->uploadFileToCloudinary($request,'logo');
         
         $employer = new Employer([
             'company_name' => $validatedData['company_name'],
-            'logo' => $validatedData['logo'],
+            'logo' => $logo,
         ]);
         
         $employer->save();
