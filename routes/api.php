@@ -30,4 +30,5 @@ Route::put("application-approval/{application_id}",[EmployerController::class,"a
 // Candidate Routes
 Route::apiResource("candidates", CandidateController::class);
 Route::get("candidates/{id}/applications", [CandidateController::class, "appliedApplications"]);
-Route::post("candidates/{id}/applications", [CandidateController::class, "applyToPost"]);
+Route::post("applications/{post_id}/apply", [CandidateController::class, "applyToPost"]);
+Route::post("applications/{post_id}/cancel", [CandidateController::class, "cancelApplication"]);

@@ -11,7 +11,7 @@ class StoreApplicationRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -22,7 +22,25 @@ class StoreApplicationRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'resume' => 'required_without_all:email,phone|mimes:pdf,doc,docx|max:2048',
+            'email' => 'required_without:resume|email',
+            'phone' => 'required_without:resume|regex:/^([0-9\s\-\+\(\)]*)$/',
+        ];
+    }
+
+    /**
+     * Get the error messages for the defined validation rules.
+     *
+     * @return array<string, string>
+     */
+    public function messages(): array
+    {
+        return [
+            'resume.required_without_all' => 'Please upload your resume.',
+            'email.required_without' => 'The email field is required if resume is not provided.',
+            'email.email' => 'Please provide a valid email address.',
+            'phone.required_without' => 'The phone field is required if resume is not provided.',
+            'phone.regex' => 'Please provide a valid phone number.',
         ];
     }
 }

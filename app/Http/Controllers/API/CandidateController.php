@@ -3,9 +3,13 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\StoreApplicationRequest;
 use App\Http\Requests\StoreCandidateRequest;
+use App\Http\Resources\ApplicationResource;
 use App\Http\Resources\CandidateResource;
+use App\Models\Application;
 use App\Models\Candidate;
+use App\Models\Post;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
@@ -55,12 +59,31 @@ class CandidateController extends Controller
     }
 
     public function appliedApplications(Request $request, string $id) {
-        $candidateApplications = Candidate::findOrFail($id);
-        // return CandidateResource::collection($candidateApplications);
-        return response()->json($candidateApplications->applications);
+        $candidate = Candidate::findOrFail($id);
+        return ApplicationResource::collection($candidate->applications);
     }
 
-    public function applyToPost(Request $request) {
+    public function applyToPost(StoreApplicationRequest $request, string $post_id) {
+        $validated = $request->validated();
 
+        $candidate = Candidate::find(5);
+
+        $checkPost = Post::findOrFail($post_id);
+        $application = new Application();
+        $application->candidate_id = $candidate->id;
+        $application->post_id = $post_id;
+        $application->resume = $validated->resume ?? null;
+        $application->email = $validated->email ?? null;
+        $application->phone = $validated->phone ?? null;
+        $application->status = 'pending';
+
+        // $application->save();
+        return response()->json($application);
+    }
+
+    public function cancelApplication(string $app_id) {
+        $application = Application::find($app_id);
+
+        return response()->json(["status" => "success", "data" => $application]);
     }
 }
