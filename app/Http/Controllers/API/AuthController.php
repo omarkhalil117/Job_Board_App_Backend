@@ -14,10 +14,11 @@ use App\Models\Employer;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
-
+use CloudinaryLabs\CloudinaryLaravel\Facades\Cloudinary;
+ use GuzzleHttp\Client;
 class AuthController extends Controller
 {
-
+   
     public function empRegister(StoreEmployerRequest $request){
         $validatedData = $request->validated();
         
@@ -26,20 +27,53 @@ class AuthController extends Controller
             'logo' => $validatedData['logo'],
         ]);
         
-    
         $employer->save();
         
-   
+        $image='';
+
+        if ($request->hasFile('image')) {
+        
+            $client = new Client([
+                'verify' => config('services.cloudinary.verify'),
+            ]);
+            
+            try {
+                $response = $client->request('POST', 'https://api.cloudinary.com/v1_1/deqwn8wr6/auto/upload', [
+                    'multipart' => [
+                        [
+                            'name' => 'file',
+                            'contents' => fopen($request->file('image')->getPathname(), 'r'),
+                        ],
+                        [
+                            'name' => 'upload_preset',
+                            'contents' => 'jdebs8xw', 
+                        ],
+                    ],
+                ]);
+                $cloudinaryResponse = json_decode($response->getBody()->getContents(), true);
+                $url = $cloudinaryResponse['secure_url'] ?? null;
+                
+                        
+                $image = $url;
+
+            }catch (\Exception $e) {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Error uploading image to Cloudinary',
+                    'error' => $e->getMessage()
+                ], 500);
+            }
+        }
+        
         $user = new User([
             'name' => $validatedData['user']['name'],
             'email' => $validatedData['user']['email'],
             'password' => bcrypt($validatedData['user']['password']),
             'username' => $validatedData['user']['username'],
-            'image' => $validatedData['user']['image'] ?? null,
+            'image'=>  $image,
             'role' => 'employer', 
         ]);
         
-
         $employer->user()->save($user);
     
         return response()->json([
@@ -48,7 +82,7 @@ class AuthController extends Controller
             'token' => $user->createToken("API TOKEN")->plainTextToken
         ], 200);
     }
-
+    
     public function candidateRegister(StoreCandidateRequest $request){
         $validatedData = $request->validated();
         
@@ -63,23 +97,56 @@ class AuthController extends Controller
         ]);
 
         $candidate->save();
+        $image='';
+    
+        if ($request->hasFile('image')) {
+        
+            $client = new Client([
+                'verify' => config('services.cloudinary.verify'),
+            ]);
+            
+            try {
+                $response = $client->request('POST', 'https://api.cloudinary.com/v1_1/deqwn8wr6/auto/upload', [
+                    'multipart' => [
+                        [
+                            'name' => 'file',
+                            'contents' => fopen($request->file('image')->getPathname(), 'r'),
+                        ],
+                        [
+                            'name' => 'upload_preset',
+                            'contents' => 'jdebs8xw', 
+                        ],
+                    ],
+                ]);
+                $cloudinaryResponse = json_decode($response->getBody()->getContents(), true);
+                $url = $cloudinaryResponse['secure_url'] ?? null;
+          
+                $image = $url;
 
+            }catch (\Exception $e) {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Error uploading image to Cloudinary',
+                    'error' => $e->getMessage()
+                ], 500);
+            }
+        }
+        
         $user = new User([
             'name' => $validatedData['user']['name'],
             'email' => $validatedData['user']['email'],
             'password' => bcrypt($validatedData['user']['password']),
             'username' => $validatedData['user']['username'],
-            'image' => $validatedData['user']['image'] ?? null,
-            'role' => 'candidate',
+            'image'=>  $image,
+            'role' => 'candidate', 
         ]);
-    
-
+        
         $candidate->user()->save($user);
     
         return response()->json([
             'status' => true,
             'message' => 'Candidate Created Successfully',
-            'token' =>  $token = $user->createToken("API TOKEN")->plainTextToken
+            'token' => $user->createToken("API TOKEN")->plainTextToken
         ], 200);
     }
     
