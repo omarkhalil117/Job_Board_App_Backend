@@ -22,7 +22,7 @@ class StoreCandidateRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'resume' => ['required', 'string'],
+            'resume' => ['required', 'file', 'mimes:pdf,doc,docx'], 
             'education' => ['required', 'string'],
             'faculty' => ['required', 'string'],
             'city' => ['required', 'string'],

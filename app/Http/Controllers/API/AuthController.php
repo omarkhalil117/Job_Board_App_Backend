@@ -20,6 +20,7 @@ class AuthController extends Controller
 {
    
     public function empRegister(StoreEmployerRequest $request){
+
         $validatedData = $request->validated();
         
         $employer = new Employer([
@@ -29,65 +30,33 @@ class AuthController extends Controller
         
         $employer->save();
         
-        $image='';
+        $image = $this->uploadFileToCloudinary($request,'image');
 
-        if ($request->hasFile('image')) {
-        
-            $client = new Client([
-                'verify' => config('services.cloudinary.verify'),
-            ]);
-            
-            try {
-                $response = $client->request('POST', 'https://api.cloudinary.com/v1_1/deqwn8wr6/auto/upload', [
-                    'multipart' => [
-                        [
-                            'name' => 'file',
-                            'contents' => fopen($request->file('image')->getPathname(), 'r'),
-                        ],
-                        [
-                            'name' => 'upload_preset',
-                            'contents' => 'jdebs8xw', 
-                        ],
-                    ],
-                ]);
-                $cloudinaryResponse = json_decode($response->getBody()->getContents(), true);
-                $url = $cloudinaryResponse['secure_url'] ?? null;
-                
-                        
-                $image = $url;
-
-            }catch (\Exception $e) {
-                return response()->json([
-                    'status' => false,
-                    'message' => 'Error uploading image to Cloudinary',
-                    'error' => $e->getMessage()
-                ], 500);
-            }
-        }
-        
         $user = new User([
             'name' => $validatedData['user']['name'],
             'email' => $validatedData['user']['email'],
             'password' => bcrypt($validatedData['user']['password']),
             'username' => $validatedData['user']['username'],
-            'image'=>  $image,
+            'image' => $image,
             'role' => 'employer', 
         ]);
         
         $employer->user()->save($user);
-    
+
         return response()->json([
             'status' => true,
             'message' => 'Employer Created Successfully',
             'token' => $user->createToken("API TOKEN")->plainTextToken
         ], 200);
     }
-    
+
     public function candidateRegister(StoreCandidateRequest $request){
         $validatedData = $request->validated();
-        
+
+        $resume = $this->uploadFileToCloudinary($request,'resume');
+
         $candidate = new Candidate([
-            'resume' => $validatedData['resume'],
+            'resume' =>  $resume,
             'education' => $validatedData['education'],
             'faculty' => $validatedData['faculty'],
             'city' => $validatedData['city'],
@@ -97,41 +66,9 @@ class AuthController extends Controller
         ]);
 
         $candidate->save();
-        $image='';
-    
-        if ($request->hasFile('image')) {
-        
-            $client = new Client([
-                'verify' => config('services.cloudinary.verify'),
-            ]);
-            
-            try {
-                $response = $client->request('POST', 'https://api.cloudinary.com/v1_1/deqwn8wr6/auto/upload', [
-                    'multipart' => [
-                        [
-                            'name' => 'file',
-                            'contents' => fopen($request->file('image')->getPathname(), 'r'),
-                        ],
-                        [
-                            'name' => 'upload_preset',
-                            'contents' => 'jdebs8xw', 
-                        ],
-                    ],
-                ]);
-                $cloudinaryResponse = json_decode($response->getBody()->getContents(), true);
-                $url = $cloudinaryResponse['secure_url'] ?? null;
-          
-                $image = $url;
 
-            }catch (\Exception $e) {
-                return response()->json([
-                    'status' => false,
-                    'message' => 'Error uploading image to Cloudinary',
-                    'error' => $e->getMessage()
-                ], 500);
-            }
-        }
-        
+        $image = $this->uploadFileToCloudinary($request,'image');
+
         $user = new User([
             'name' => $validatedData['user']['name'],
             'email' => $validatedData['user']['email'],
@@ -187,5 +124,41 @@ class AuthController extends Controller
             return response()->json(['error' => 'Invalid user role'], 400);
         }
     }
-
+    private function uploadFileToCloudinary($request, $field){
+        $fileUrl = '';
+        
+        if ($request->hasFile($field)) {
+            $client = new Client([
+                'verify' => config('services.cloudinary.verify'),
+            ]);
+            
+            try {
+                $response = $client->request('POST', 'https://api.cloudinary.com/v1_1/deqwn8wr6/auto/upload', [
+                    'multipart' => [
+                        [
+                            'name' => 'file',
+                            'contents' => fopen($request->file($field)->getPathname(), 'r'),
+                        ],
+                        [
+                            'name' => 'upload_preset',
+                            'contents' => 'jdebs8xw', 
+                        ],
+                    ],
+                ]);
+                $cloudinaryResponse = json_decode($response->getBody()->getContents(), true);
+                $url = $cloudinaryResponse['secure_url'] ?? null;
+                
+                $fileUrl = $url;
+    
+            } catch (\Exception $e) {
+                return response()->json([
+                    'status' => false,
+                    'message' => "Error uploading $field to Cloudinary",
+                    'error' => $e->getMessage()
+                ], 500);
+            }
+        }
+    
+        return $fileUrl;
+    }
 }
