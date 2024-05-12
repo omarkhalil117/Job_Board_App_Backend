@@ -102,7 +102,7 @@ class AuthController extends Controller
         $user = $request->user();
 
         if ($user->role == "admin") {
-             return new UserResource($user);
+            return new UserResource($user);
         }
         elseif ($user->role == "employer") {
             $employer = Employer::find($user->userable_id);

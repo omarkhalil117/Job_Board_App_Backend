@@ -32,5 +32,5 @@ Route::post('CandidateRegister', [AuthController::class, 'candidateRegister'])->
 // Login
 Route::post('login', [AuthController::class, 'login'] )->middleware('role:any');  
 
-// Get user data from token
+// Get user data from token (admin-employer-candidate)
 Route::get('user', [AuthController::class, 'getUserData'] )->middleware('auth:sanctum');
