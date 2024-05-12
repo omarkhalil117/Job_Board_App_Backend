@@ -4,6 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use \App\Http\Controllers\API\AdminController;
 use App\Http\Controllers\API\AuthController;
+use App\Http\Controllers\API\CandidateController;
 use App\Http\Controllers\API\PostController ;
 use App\Http\Controllers\API\EmployerController ;
 use App\Http\Controllers\API\SkillController ;
@@ -68,3 +69,8 @@ Route::post('email/verification-notification', function (Request $request) {
         'message' => 'Verification link sent!'
     ]);
 })->middleware(['auth:sanctum', 'throttle:6,1'])->name('verification.send');
+// Candidate Routes
+Route::apiResource("candidates", CandidateController::class);
+Route::get("candidates/{id}/applications", [CandidateController::class, "appliedApplications"]);
+Route::post("applications/{post_id}/apply", [CandidateController::class, "applyToPost"]);
+Route::post("applications/{post_id}/cancel", [CandidateController::class, "cancelApplication"]);
