@@ -14,7 +14,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use Laravel\Socialite\Facades\Socialite;
 
-
+// 
 // Admin APIS
 Route::get('admin/approvedjobs', [AdminController::class, 'getApprovedJobs'])->middleware('role:any');  
 Route::get('admin/pendingjobs', [AdminController::class, 'getPendingJobs'])->middleware('role:any');  
@@ -38,10 +38,10 @@ Route::post('EmpRegister', [AuthController::class, 'empRegister'])->middleware('
 Route::post('CandidateRegister', [AuthController::class, 'candidateRegister'])->middleware('role:any');  
 
 // Login
-Route::post('login', [AuthController::class, 'login'] )->middleware('role:any');  
+Route::post('login', [AuthController::class, 'login'] )->middleware('role:any');  //without token
 
 // Get user data from token (admin-employer-candidate)
-Route::get('user', [AuthController::class, 'getUserData'] )->middleware('auth:sanctum');
+Route::get('user', [AuthController::class, 'getUserData'] )->middleware('auth:sanctum'); //token any role
 
 // Routes for email verification
 Route::get('/email/verify', function () {
