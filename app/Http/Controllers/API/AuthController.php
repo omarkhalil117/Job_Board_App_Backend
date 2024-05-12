@@ -15,7 +15,9 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use CloudinaryLabs\CloudinaryLaravel\Facades\Cloudinary;
- use GuzzleHttp\Client;
+use GuzzleHttp\Client;
+use Illuminate\Auth\Events\Registered;
+
 class AuthController extends Controller
 {
    
@@ -42,9 +44,10 @@ class AuthController extends Controller
             'image' => $image,
             'role' => 'employer', 
         ]);
+        event(new Registered($user));
         
         $employer->user()->save($user);
-
+        event(new Registered($user));
         return response()->json([
             'status' => true,
             'message' => 'Employer Created Successfully',
@@ -79,7 +82,9 @@ class AuthController extends Controller
             'image'=>  $image,
             'role' => 'candidate', 
         ]);
-        
+
+        event(new Registered($user));
+
         $candidate->user()->save($user);
     
         return response()->json([
