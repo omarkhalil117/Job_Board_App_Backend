@@ -44,7 +44,7 @@ Route::post('login', [AuthController::class, 'login'] )->middleware('role:any');
 // Get user data from token (admin-employer-candidate)
 Route::get('user', [AuthController::class, 'getUserData'] )->middleware('auth:sanctum'); //token any role
 
-// Routes for email verification
+/*// Routes for email verification
 Route::get('/email/verify', function () {
      return response()->json([
          'message' => 'Please check your email for the verification link.'
@@ -68,7 +68,8 @@ Route::get('/email/verify/{id}/{hash}', function (EmailVerificationRequest $requ
     return response()->json([
          'message' => 'Verification link sent!'
     ]);
- })->middleware(['auth:sanctum', 'throttle:6,1'])->name('verification.send');
+ })->middleware(['auth:sanctum', 'throttle:6,1'])->name('verification.send');*/
+
 // Candidate Routes
 Route::apiResource("candidates", CandidateController::class)->middleware('role:any');
 Route::get("candidates/{id}/applications", [CandidateController::class, "appliedApplications"]);
