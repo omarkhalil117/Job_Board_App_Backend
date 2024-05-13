@@ -22,7 +22,7 @@ class StoreApplicationRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'resume' => 'required_without_all:email,phone|mimes:pdf,doc,docx|max:2048',
+            'resume' => 'required_without_all:email,phone|mimes:pdf|max:2048',
             'email' => 'required_without:resume|email',
             'phone' => 'required_without:resume|regex:/^([0-9\s\-\+\(\)]*)$/',
         ];
