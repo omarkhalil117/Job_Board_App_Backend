@@ -69,7 +69,7 @@ Route::get('/posts/titles', function(Request $request) {
 });
 
 Route::apiResource('posts' , PostController::class)->middleware('role:any');
-Route::apiResource('applications' , ApplicationController::class);
+// Route::apiResource('applications' , ApplicationController::class);
 Route::apiResource("skills",SkillController::class);
 // Employer
 Route::apiResource("employers",EmployerController::class)->middleware('role:any'); 
@@ -96,7 +96,7 @@ Route::get('user', [AuthController::class, 'getUserData'] )->middleware('auth:sa
 
 
 // Candidate Routes
+Route::get("candidates/applications", [CandidateController::class, "appliedApplications"]);
 Route::apiResource("candidates", CandidateController::class)->middleware('role:any');
-Route::get("candidates/{id}/applications", [CandidateController::class, "appliedApplications"]);
-Route::post("applications/{post_id}/apply", [CandidateController::class, "applyToPost"]);
-Route::post("applications/{post_id}/cancel", [CandidateController::class, "cancelApplication"]);
+Route::post("applications", [CandidateController::class, "applyToPost"]);
+Route::delete("applications", [CandidateController::class, "cancelApplication"]);

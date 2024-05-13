@@ -11,7 +11,7 @@ class UpdateCandidateRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -22,7 +22,16 @@ class UpdateCandidateRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'name' => 'nullable|string',
+            'email' => 'nullable|string|email|unique:users,email',
+            'username' => 'nullable|string|unique:users,username',
+            'education' => 'nullable|string',
+            'faculty' => 'nullable|string',
+            'city' => 'nullable|string',
+            'experience_level' => 'nullable|in:junior,mid-senior,senior,manager,team-lead',
+            'linkedin' => 'nullable|string|url',
+            'github' => 'nullable|string|url',
+            'image' => 'nullable|string|url',
         ];
     }
 }
