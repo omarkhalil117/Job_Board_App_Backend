@@ -66,7 +66,7 @@ class CandidateController extends Controller
     }
 
     public function applyToPost(StoreApplicationRequest $request, string $post_id) {
-        $user = app('App\Http\Controllers\API\AuthController')->getUserDataByRole($request);
+        $user = app('App\Http\Controllers\API\AuthController')->getUserDataByRole($request->bearerToken());
         return response()->json(["status" => "success", "user" => $user]);
 
         $validated = $request->validated();
