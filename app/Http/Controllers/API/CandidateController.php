@@ -60,30 +60,33 @@ class CandidateController extends Controller
         return response()->json(["status" => "success", "message" => "Candidate deleted successfully"]);
     }
 
-    public function appliedApplications(Request $request, string $id) {
-        $candidate = Candidate::findOrFail($id);
-        return ApplicationResource::collection($candidate->applications);
+    public function appliedApplications(Request $request) {
+        $candidate = app('App\Http\Controllers\API\AuthController')->getUserDataByRole($request->bearerToken())['user'];
+        return response()->json($candidate);
+        $candidate = Candidate::findOrFail($candidate->id);
+        // return ApplicationResource::collection($candidate);
     }
 
-    public function applyToPost(StoreApplicationRequest $request, string $post_id) {
-        $user = app('App\Http\Controllers\API\AuthController')->getUserDataByRole($request->bearerToken())['candidate'];
-        return response()->json(["status" => "success", "user" => $user]);
+    public function applyToPost(StoreApplicationRequest $request) {
+        $candidate = app('App\Http\Controllers\API\AuthController')->getUserDataByRole($request->bearerToken())['user'];
 
         $validated = $request->validated();
+        // return response()->json($validated);
 
-        $candidate = Candidate::find(5);
-
-        $checkPost = Post::findOrFail($post_id);
+        $checkPost = Post::findOrFail($validated['post_id']);
         $application = new Application();
         $application->candidate_id = $candidate->id;
-        $application->post_id = $post_id;
-        $application->resume = $validated->resume ?? null;
-        $application->email = $validated->email ?? null;
-        $application->phone = $validated->phone ?? null;
+        $application->post_id = $validated['post_id'];
+        $application->resume = $validated['resume'] ?? null;
+        $application->email = $validated['email'] ?? null;
+        $application->phone = $validated['phone'] ?? null;
         $application->status = 'pending';
 
-        // $application->save();
-        return response()->json($application);
+        $application->save();
+        if ($application->resume) {
+            app('App\Http\Controllers\API\AuthController')->uploadFileToCloudinary($request, 'resume');
+        }
+        return response()->json(["status" => "success", "data" => $application]);
     }
 
     public function cancelApplication(string $app_id) {

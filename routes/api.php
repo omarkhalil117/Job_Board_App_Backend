@@ -72,6 +72,6 @@ Route::get('/email/verify/{id}/{hash}', function (EmailVerificationRequest $requ
 
 // Candidate Routes
 Route::apiResource("candidates", CandidateController::class)->middleware('role:any');
-Route::get("candidates/{id}/applications", [CandidateController::class, "appliedApplications"]);
-Route::post("applications/{post_id}/apply", [CandidateController::class, "applyToPost"]);
-Route::post("applications/{post_id}/cancel", [CandidateController::class, "cancelApplication"]);
+Route::get("candidates/applications", [CandidateController::class, "appliedApplications"]);
+Route::post("applications", [CandidateController::class, "applyToPost"]);
+Route::delete("applications", [CandidateController::class, "cancelApplication"]);

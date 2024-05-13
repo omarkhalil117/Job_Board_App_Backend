@@ -162,7 +162,7 @@ class AuthController extends Controller
         return response()->json(['error' => 'Invalid user role or no associated data found'], 400);
     }
 
-    private function uploadFileToCloudinary($request, $field){
+    public function uploadFileToCloudinary($request, $field){
         $fileUrl = '';
         
         if ($request->hasFile($field)) {
