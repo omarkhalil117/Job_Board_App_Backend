@@ -21,8 +21,6 @@ class UpdateCandidateRequest extends FormRequest
      */
     public function rules(): array
     {
-        $userId = $this->user()->id;
-
         return [
             'name' => 'nullable|string',
             'email' => 'nullable|string|email|unique:users,email',
