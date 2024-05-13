@@ -145,7 +145,7 @@ class AuthController extends Controller
             if ($employer) {
                 return [
                     'token' => $token,
-                    'employer' => new EmployerResource($employer),
+                    'user' => new EmployerResource($employer),
                 ];
             } 
         } 
@@ -154,7 +154,7 @@ class AuthController extends Controller
             if ($candidate) {
                 return [
                     'token' => $token,
-                    'candidate' => new CandidateResource($candidate),
+                    'user' => new CandidateResource($candidate),
                 ];
             }
         }
