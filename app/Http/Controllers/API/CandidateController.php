@@ -3,10 +3,12 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\API\AuthController;
 use App\Http\Requests\StoreApplicationRequest;
 use App\Http\Requests\StoreCandidateRequest;
 use App\Http\Resources\ApplicationResource;
 use App\Http\Resources\CandidateResource;
+use App\Http\Resources\UserResource;
 use App\Models\Application;
 use App\Models\Candidate;
 use App\Models\Post;
@@ -64,6 +66,9 @@ class CandidateController extends Controller
     }
 
     public function applyToPost(StoreApplicationRequest $request, string $post_id) {
+        $user = app('App\Http\Controllers\API\AuthController')->getUserData($request);
+        return response()->json(["status" => "success", "user" => $user]);
+
         $validated = $request->validated();
 
         $candidate = Candidate::find(5);
