@@ -125,7 +125,7 @@ class AuthController extends Controller
         return $this->getUserDataByRole($token);
     }
     
-    private function getUserDataByRole($token){
+    public function getUserDataByRole($token){
         
         $currentRequestPersonalAccessToken = PersonalAccessToken::findToken($token);
         $user = $currentRequestPersonalAccessToken->tokenable;
