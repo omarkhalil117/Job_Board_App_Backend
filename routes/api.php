@@ -35,6 +35,7 @@ Route::apiResource("posts",PostController::class)->middleware('role:any');
 Route::apiResource("skills",SkillController::class);
 // Employer
 Route::apiResource("employers",EmployerController::class)->middleware('role:any'); 
+Route::get("jobs/employer/{employer_id}",[EmployerController::class,"getEmployerJobs"])->middleware('role:any');  
 Route::get("job-applications/{post_id}",[EmployerController::class,"getApplications"])->middleware('role:any');  
 Route::put("application-approval/{application_id}",[EmployerController::class,"approveApplication"])->middleware('role:any');  
 

@@ -45,8 +45,10 @@ class EmployerController extends Controller
      */
     public function show(Employer $employer)
     {
-        $employers = Employer::with('user', 'posts')->findOrFail($employer->id);
-        return response()->json(["status" => "success", "data" => new EmployerResource($employer)]);
+        $employers = Employer::with('user')->findOrFail($employer->id);
+        return response()->json(["status" => "success", 
+        "data" => new EmployerResource($employer)
+        ]);
 
     }
 
@@ -70,6 +72,7 @@ class EmployerController extends Controller
             return response()->json([
                 "status" => "success",
                 "data" => new EmployerResource($employer)
+                
             ]);
         } catch (\Exception $e) {
             DB::rollBack();
@@ -91,6 +94,22 @@ class EmployerController extends Controller
         return response()->json(["status" => "success", "message" => "Employer deleted successfully"]);
 
     }
+    public function getEmployerJobs(Request $request, string $employer_id)
+        {
+
+            $perPage = $request->query('perPage', 3);
+            $perPage = max(1, min(10, intval($perPage)));
+
+            $employer = Employer::findOrFail($employer_id);
+
+            $jobs = $employer->posts()->paginate($perPage);
+
+            return response()->json([
+                "status" => "success",
+                "jobs" => $jobs,
+                
+            ]);
+        }
     public function getApplications( string $post_id ){
         $perPage = request()->query('perPage', 2);
         $post = new PostResource(Post::find($post_id));
