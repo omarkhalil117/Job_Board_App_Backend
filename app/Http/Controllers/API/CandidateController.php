@@ -11,6 +11,7 @@ use App\Http\Resources\UserResource;
 use App\Models\Application;
 use App\Models\Candidate;
 use App\Models\Post;
+use Exception;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
@@ -66,25 +67,29 @@ class CandidateController extends Controller
     }
 
     public function applyToPost(StoreApplicationRequest $request) {
-        $candidate = app('App\Http\Controllers\API\AuthController')->getUserDataByRole($request->bearerToken())['user'];
-
-        $validated = $request->validated();
-
-        $checkPost = Post::findOrFail($validated['post_id']);
-        $application = new Application();
-        $application->candidate_id = $candidate->id;
-        $application->post_id = $validated['post_id'];
-        $resumeData = null;
-        if (!empty($validated['resume'])) {
-            $resumeData = app('App\Http\Controllers\API\AuthController')->uploadFileToCloudinary($request, 'resume');
+        try {
+            $candidate = app('App\Http\Controllers\API\AuthController')->getUserDataByRole($request->bearerToken())['user'];
+    
+            $validated = $request->validated();
+    
+            $application = new Application();
+            $application->candidate_id = $candidate->id;
+            $application->post_id = $validated['post_id'];
+            $resumeData = null;
+            if (!empty($validated['resume'])) {
+                $resumeData = app('App\Http\Controllers\API\AuthController')->uploadFileToCloudinary($request, 'resume');
+            }
+            $application->resume = $resumeData;
+            $application->email = $validated['email'] ?? null;
+            $application->phone = $validated['phone'] ?? null;
+            $application->status = 'pending';
+    
+            $application->save();
+            return response()->json(ApplicationResource::make($application));
         }
-        $application->resume = $resumeData;
-        $application->email = $validated['email'] ?? null;
-        $application->phone = $validated['phone'] ?? null;
-        $application->status = 'pending';
-
-        $application->save();
-        return response()->json(ApplicationResource::make($application));
+        catch(Exception $e) {
+            return response()->json($e->getMessage());
+        }
     }
 
     public function cancelApplication(Request $request) {
