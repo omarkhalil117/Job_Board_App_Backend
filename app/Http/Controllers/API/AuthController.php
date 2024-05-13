@@ -111,7 +111,6 @@ class AuthController extends Controller
         $request->validate([
             'email' => 'required|email',
             'password' => 'required',
-            'device_name' => 'required',
         ]);
     
         $user = User::where('email', $request->email)->first();
@@ -120,7 +119,7 @@ class AuthController extends Controller
             return response()->json(['error' => 'Unauthorized'], 401);
         }
     
-        $token = $user->createToken($request->device_name)->plainTextToken;
+        $token = $user->createToken($request->email)->plainTextToken;
     
         return $this->getUserDataByRole($token);
     }
