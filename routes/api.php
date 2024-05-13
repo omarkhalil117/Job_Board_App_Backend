@@ -45,32 +45,32 @@ Route::post('login', [AuthController::class, 'login'] )->middleware('role:any');
 Route::get('user', [AuthController::class, 'getUserData'] )->middleware('auth:sanctum'); //token any role
 
 // Routes for email verification
-Route::get('/email/verify', function () {
-    return response()->json([
-        'message' => 'Please check your email for the verification link.'
-    ]);
-})->middleware('auth:sanctum')->name('verification.notice');
+// Route::get('/email/verify', function () {
+//     return response()->json([
+//         'message' => 'Please check your email for the verification link.'
+//     ]);
+// })->middleware('auth:sanctum')->name('verification.notice');
 
 
-// Handle email verification
-Route::get('/email/verify/{id}/{hash}', function (EmailVerificationRequest $request) {
-    $request->fulfill();
-    return response()->json([
-        'message' => 'Email verified successfully.',
-    ], 200);
+// // Handle email verification
+// Route::get('/email/verify/{id}/{hash}', function (EmailVerificationRequest $request) {
+//     $request->fulfill();
+//     return response()->json([
+//         'message' => 'Email verified successfully.',
+//     ], 200);
     
-})->middleware(['auth:sanctum', 'signed'])->name('verification.verify');
+// })->middleware(['auth:sanctum', 'signed'])->name('verification.verify');
 
-// Resend verification link
-Route::post('email/verification-notification', function (Request $request) {
-    $request->user()->sendEmailVerificationNotification();
+// // Resend verification link
+// Route::post('email/verification-notification', function (Request $request) {
+//     $request->user()->sendEmailVerificationNotification();
 
-    return response()->json([
-        'message' => 'Verification link sent!'
-    ]);
-})->middleware(['auth:sanctum', 'throttle:6,1'])->name('verification.send');
+//     return response()->json([
+//         'message' => 'Verification link sent!'
+//     ]);
+// })->middleware(['auth:sanctum', 'throttle:6,1'])->name('verification.send');
 // Candidate Routes
-Route::apiResource("candidates", CandidateController::class);
+Route::apiResource("candidates", CandidateController::class)->middleware('role:any');
 Route::get("candidates/{id}/applications", [CandidateController::class, "appliedApplications"]);
 Route::post("applications/{post_id}/apply", [CandidateController::class, "applyToPost"]);
 Route::post("applications/{post_id}/cancel", [CandidateController::class, "cancelApplication"]);
