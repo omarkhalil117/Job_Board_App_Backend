@@ -19,9 +19,9 @@ class ApplicationResource extends JsonResource
             'id' => $this->id,
             'candidate_id'=>$this->candidate_id,
             'post_id'=>$this->post_id,
-            'resume'=>$this->resume,
-            'email'=>$this->email,
-            'phone'=>$this->phone,
+            'resume'=>$this->resume ?? null,
+            'email'=>$this->email ?? null,
+            'phone'=>$this->phone ?? null,
             'status'=>$this->status,
             'application_date'=>Carbon::parse($this->created_at)->toDateString(),
         ];

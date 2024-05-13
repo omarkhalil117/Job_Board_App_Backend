@@ -5,8 +5,10 @@ use Illuminate\Support\Facades\Route;
 use \App\Http\Controllers\API\AdminController;
 use App\Http\Controllers\API\AuthController;
 use App\Http\Controllers\API\CandidateController;
-use App\Http\Controllers\API\PostController ;
-use App\Http\Controllers\API\EmployerController ;
+use \App\Models\Post;
+use \App\Http\Controllers\API\PostController;
+use \App\Http\Controllers\API\EmployerController ;
+use \App\Http\Controllers\API\ApplicationController ;
 use App\Http\Controllers\API\SkillController ;
 use App\Models\User;
 use Dotenv\Exception\ValidationException;
@@ -27,7 +29,47 @@ Route::get('admin/candidates', [AdminController::class, 'getCandidates'])->middl
 Route::get("posts/deleted", [PostController::class, 'deletedPosts'])->middleware('role:any'); 
 Route::get('posts/restore/{id}', [PostController::class, 'restorePost'])->middleware('role:any'); 
 Route::delete('posts/force-delete/{id}', [PostController::class, 'forceDelete'])->middleware('role:any'); 
-Route::apiResource("posts",PostController::class)->middleware('role:any');
+
+Route::get('/home/posts' , function (Request $request) {
+
+    $query = Post::query();
+
+    if ($request->has('location'))
+    {
+        $query->where('location', $request->input('location'));
+    }
+
+    if ($request->has('work_type'))
+    {
+        $workTypes = explode(',', $request->input('work_type'));
+        $query->whereIn('work_type', $workTypes);
+    }
+
+    if ($request->has('job_title'))
+    {
+        $keyword = $request->input('job_title');
+        $query->where('job_title', 'like' , '%'.$keyword.'%');
+    }
+
+    if ($request->has('salary'))
+    {
+        $salary = $request->input('salary');
+        $query->where('start_salary', '<=' , $salary)
+              ->where('end_salary', '>=', $salary);
+            //   ->with('employer');
+    }
+
+    $res = $query->with('employer')->paginate(5);
+
+    return $res;
+});
+
+Route::get('/posts/titles', function(Request $request) {
+    return Post::select('job_title')->pluck('job_title')->toArray();
+});
+
+Route::apiResource('posts' , PostController::class)->middleware('role:any');
+// Route::apiResource('applications' , ApplicationController::class);
 Route::apiResource("skills",SkillController::class);
 // Employer
 Route::apiResource("employers",EmployerController::class)->middleware('role:any'); 
@@ -54,7 +96,7 @@ Route::get('user', [AuthController::class, 'getUserData'] )->middleware('auth:sa
 
 
 // Candidate Routes
+Route::get("candidates/applications", [CandidateController::class, "appliedApplications"]);
 Route::apiResource("candidates", CandidateController::class)->middleware('role:any');
-Route::get("candidates/{id}/applications", [CandidateController::class, "appliedApplications"]);
-Route::post("applications/{post_id}/apply", [CandidateController::class, "applyToPost"]);
-Route::post("applications/{post_id}/cancel", [CandidateController::class, "cancelApplication"]);
+Route::post("applications", [CandidateController::class, "applyToPost"]);
+Route::delete("applications", [CandidateController::class, "cancelApplication"]);

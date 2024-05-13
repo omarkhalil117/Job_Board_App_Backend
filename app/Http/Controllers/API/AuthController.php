@@ -124,7 +124,7 @@ class AuthController extends Controller
         return $this->getUserDataByRole($token);
     }
     
-    private function getUserDataByRole($token){
+    public function getUserDataByRole($token){
         
         $currentRequestPersonalAccessToken = PersonalAccessToken::findToken($token);
         $user = $currentRequestPersonalAccessToken->tokenable;
@@ -144,7 +144,7 @@ class AuthController extends Controller
             if ($employer) {
                 return [
                     'token' => $token,
-                    'employer' => new EmployerResource($employer),
+                    'user' => new EmployerResource($employer),
                 ];
             } 
         } 
@@ -153,7 +153,7 @@ class AuthController extends Controller
             if ($candidate) {
                 return [
                     'token' => $token,
-                    'candidate' => new CandidateResource($candidate),
+                    'user' => new CandidateResource($candidate),
                 ];
             }
         }
@@ -161,7 +161,7 @@ class AuthController extends Controller
         return response()->json(['error' => 'Invalid user role or no associated data found'], 400);
     }
 
-    private function uploadFileToCloudinary($request, $field){
+    public function uploadFileToCloudinary($request, $field){
         $fileUrl = '';
         
         if ($request->hasFile($field)) {
