@@ -75,7 +75,7 @@ class CandidateController extends Controller
         $application->candidate_id = $candidate->id;
         $application->post_id = $validated['post_id'];
         $resumeData = null;
-        if ($validated['resume']) {
+        if (!empty($validated['resume'])) {
             $resumeData = app('App\Http\Controllers\API\AuthController')->uploadFileToCloudinary($request, 'resume');
         }
         $application->resume = $resumeData;
@@ -87,9 +87,11 @@ class CandidateController extends Controller
         return response()->json(ApplicationResource::make($application));
     }
 
-    public function cancelApplication(string $app_id) {
-        $application = Application::find($app_id);
-
-        return response()->json(["status" => "success", "data" => $application]);
+    public function cancelApplication(Request $request) {
+        $application = Application::findOrFail($request['app_id']);
+        
+        $application->delete();
+        
+        return response()->json(["status" => "deleted successfully", "data" => $application]);
     }
 }
