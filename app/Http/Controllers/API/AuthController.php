@@ -50,11 +50,11 @@ class AuthController extends Controller
   
  
    
-        $user->save(); // Save user first
+        $user->save(); 
         event(new Registered($user));
-        $user->sendEmailVerificationNotification(); // Send verification email
+        $user->sendEmailVerificationNotification(); 
     
-        $user->userable()->associate($employer); // Associate user with employer
+        $user->userable()->associate($employer); 
         $user->save();
 
         return response()->json([
@@ -92,11 +92,11 @@ class AuthController extends Controller
             'role' => 'candidate', 
         ]);
 
-        $user->save(); // Save user first
+        $user->save(); 
         event(new Registered($user));
-        $user->sendEmailVerificationNotification(); // Send verification email
+        $user->sendEmailVerificationNotification() ;
     
-        $user->userable()->associate($candidate); // Associate user with candidate
+        $user->userable()->associate($candidate); 
         $user->save();
     
         return response()->json([
