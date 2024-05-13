@@ -31,7 +31,7 @@ return [
         ],
     ],
     'cloudinary' => [
-        'verify' => 'C:\Users\rr/cacert.pem',
+        'verify' => env('CERTIFICATE'),
         'upload_preset' => 'eesezftj',
     ],
 
