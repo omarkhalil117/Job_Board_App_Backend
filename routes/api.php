@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use \App\Models\Post;
 use \App\Http\Controllers\API\PostController;
 use \App\Http\Controllers\API\EmployerController ;
+use \App\Http\Controllers\API\ApplicationController ;
 
 
 Route::get('/user', function (Request $request) {
@@ -45,6 +46,7 @@ Route::get('/home/posts' , function (Request $request) {
 });
 
 Route::apiResource('posts' , PostController::class);
+Route::apiResource('applications' , ApplicationController::class);
 Route::apiResource("employers",EmployerController::class);
 Route::get("job-applications/{post_id}",[EmployerController::class,"getApplications"]);
 Route::put("application-approval/{application_id}",[EmployerController::class,"approveApplication"]);
