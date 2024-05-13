@@ -29,6 +29,7 @@ Route::get('admin/candidates', [AdminController::class, 'getCandidates'])->middl
 Route::get("posts/deleted", [PostController::class, 'deletedPosts'])->middleware('role:any'); 
 Route::get('posts/restore/{id}', [PostController::class, 'restorePost'])->middleware('role:any'); 
 Route::delete('posts/force-delete/{id}', [PostController::class, 'forceDelete'])->middleware('role:any'); 
+
 Route::get('/home/posts' , function (Request $request) {
 
     $query = Post::query();
@@ -40,7 +41,8 @@ Route::get('/home/posts' , function (Request $request) {
 
     if ($request->has('work_type'))
     {
-        $query->where('work_type', $request->input('work_type'));
+        $workTypes = explode(',', $request->input('work_type'));
+        $query->whereIn('work_type', $workTypes);
     }
 
     if ($request->has('job_title'))
@@ -60,6 +62,10 @@ Route::get('/home/posts' , function (Request $request) {
     $res = $query->with('employer')->paginate(5);
 
     return $res;
+});
+
+Route::get('/posts/titles', function(Request $request) {
+    return Post::select('job_title')->pluck('job_title')->toArray();
 });
 
 Route::apiResource('posts' , PostController::class)->middleware('role:any');
