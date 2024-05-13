@@ -30,5 +30,9 @@ return [
             'channel' => env('SLACK_BOT_USER_DEFAULT_CHANNEL'),
         ],
     ],
+    'cloudinary' => [
+        'verify' => 'C:\Users\rr/cacert.pem',
+        'upload_preset' => 'eesezftj',
+    ],
 
 ];
