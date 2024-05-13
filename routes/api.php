@@ -9,11 +9,15 @@ use App\Http\Controllers\API\PostController ;
 use App\Http\Controllers\API\EmployerController ;
 use App\Http\Controllers\API\SkillController ;
 use App\Models\User;
+use App\Models\Post;
+
 use Dotenv\Exception\ValidationException;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use Laravel\Socialite\Facades\Socialite;
+
+
 
 // 
 // Admin APIS
