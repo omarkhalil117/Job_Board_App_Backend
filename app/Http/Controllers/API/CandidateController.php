@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
-use App\Http\Controllers\API\AuthController;
 use App\Http\Requests\StoreApplicationRequest;
 use App\Http\Requests\StoreCandidateRequest;
 use App\Http\Resources\ApplicationResource;
@@ -62,31 +61,30 @@ class CandidateController extends Controller
 
     public function appliedApplications(Request $request) {
         $candidate = app('App\Http\Controllers\API\AuthController')->getUserDataByRole($request->bearerToken())['user'];
-        return response()->json($candidate);
         $candidate = Candidate::findOrFail($candidate->id);
-        // return ApplicationResource::collection($candidate);
+        return ApplicationResource::collection($candidate->applications);
     }
 
     public function applyToPost(StoreApplicationRequest $request) {
         $candidate = app('App\Http\Controllers\API\AuthController')->getUserDataByRole($request->bearerToken())['user'];
 
         $validated = $request->validated();
-        // return response()->json($validated);
 
         $checkPost = Post::findOrFail($validated['post_id']);
         $application = new Application();
         $application->candidate_id = $candidate->id;
         $application->post_id = $validated['post_id'];
-        $application->resume = $validated['resume'] ?? null;
+        $resumeData = null;
+        if ($validated['resume']) {
+            $resumeData = app('App\Http\Controllers\API\AuthController')->uploadFileToCloudinary($request, 'resume');
+        }
+        $application->resume = $resumeData;
         $application->email = $validated['email'] ?? null;
         $application->phone = $validated['phone'] ?? null;
         $application->status = 'pending';
 
         $application->save();
-        if ($application->resume) {
-            app('App\Http\Controllers\API\AuthController')->uploadFileToCloudinary($request, 'resume');
-        }
-        return response()->json(["status" => "success", "data" => $application]);
+        return response()->json(ApplicationResource::make($application));
     }
 
     public function cancelApplication(string $app_id) {
