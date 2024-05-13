@@ -78,3 +78,36 @@ Route::apiResource("candidates", CandidateController::class);
 Route::get("candidates/{id}/applications", [CandidateController::class, "appliedApplications"]);
 Route::post("applications/{post_id}/apply", [CandidateController::class, "applyToPost"]);
 Route::post("applications/{post_id}/cancel", [CandidateController::class, "cancelApplication"]);
+
+Route::get('/home/posts' , function (Request $request) {
+
+    $query = Post::query();
+
+    if ($request->has('location'))
+    {
+        $query->where('location', $request->input('location'));
+    }
+
+    if ($request->has('work_type'))
+    {
+        $query->where('work_type', $request->input('work_type'));
+    }
+
+    if ($request->has('job_title'))
+    {
+        $keyword = $request->input('job_title');
+        $query->where('job_title', 'like' , '%'.$keyword.'%');
+    }
+
+    if ($request->has('salary'))
+    {
+        $salary = $request->input('salary');
+        $query->where('start_salary', '<=' , $salary)
+              ->where('end_salary', '>=', $salary);
+            //   ->with('employer');
+    }
+
+    $res = $query->with('employer')->paginate(5);
+
+    return $res;
+});
