@@ -90,7 +90,7 @@ Route::get('user', [AuthController::class, 'getUserData'] )->middleware('auth:sa
 
  Route::get('/email/verify/{id}', function () {
 
-    return redirect('http://localhost:5174/login');
+    return redirect(env('FRONT_URL'));
     
 })->name('verification.verify');
 
