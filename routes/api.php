@@ -11,7 +11,6 @@ use \App\Http\Controllers\API\EmployerController ;
 use \App\Http\Controllers\API\ApplicationController ;
 use App\Http\Controllers\API\SkillController ;
 use App\Models\User;
-use App\Models\Post;
 
 use Dotenv\Exception\ValidationException;
 use Illuminate\Support\Facades\Hash;
