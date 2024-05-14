@@ -31,7 +31,7 @@ class AuthController extends Controller
         $logo = $this->uploadFileToCloudinary($request,'logo');
         
         $employer = new Employer([
-            'company_name' => $validatedData['company_name'],
+            'company_name' => $request['company_name'],
             'logo' => $logo,
         ]);
         

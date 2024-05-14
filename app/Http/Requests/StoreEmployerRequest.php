@@ -25,7 +25,7 @@ class StoreEmployerRequest extends FormRequest
             'company_name' => 'nullable|string|max:255',
             'logo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'name' => 'required|string|max:255',
-            'mail' => 'required|email|unique:users,email,NULL,id,userable_type,App\Models\Employer',
+            'email' => 'required|email|unique:users,email,NULL,id,userable_type,App\Models\Employer',
             'password' => 'required|string|min:8',
             'username' => 'required|string|max:255|unique:users,username,NULL,id,userable_type,App\Models\Employer',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
