@@ -27,23 +27,29 @@ class AuthController extends Controller
     public function empRegister(StoreEmployerRequest $request){
 
         $validatedData = $request->validated();
-
-        $logo = $this->uploadFileToCloudinary($request,'logo');
         
+        $logo = null;
+        if($request['resume']){
+            $logo = $this->uploadFileToCloudinary($request,'logo');
+        }
+
         $employer = new Employer([
-            'company_name' => $validatedData['company_name'],
-            'logo' => $logo,
+            'company_name' => $request['company_name'],
+            'logo' => $logo ?? null,
         ]);
         
         $employer->save();
         
-        $image = $this->uploadFileToCloudinary($request,'image');
+        $image = null;
+        if($request['image']){
+            $image = $this->uploadFileToCloudinary($request,'image');
+        }
 
         $user = new User([
-            'name' => $validatedData['user']['name'],
-            'email' => $validatedData['user']['email'],
-            'password' => bcrypt($validatedData['user']['password']),
-            'username' => $validatedData['user']['username'],
+            'name' => $validatedData['name'],
+            'email' => $validatedData['email'],
+            'password' => bcrypt($validatedData['password']),
+            'username' => $validatedData['username'],
             'image' => $image,
             'role' => 'employer', 
         ]);
@@ -66,29 +72,33 @@ class AuthController extends Controller
 
     public function candidateRegister(StoreCandidateRequest $request){
         $validatedData = $request->validated();
-
-        $resume = $this->uploadFileToCloudinary($request,'resume');
+        $resume = null;
+        if($request['resume']){
+            $resume = $this->uploadFileToCloudinary($request,'resume');
+        }
 
         $candidate = new Candidate([
-            'resume' =>  $resume,
-            'education' => $validatedData['education'],
-            'faculty' => $validatedData['faculty'],
-            'city' => $validatedData['city'],
-            'experience_level' => $validatedData['experience_level'],
+            'resume' =>  $resume ?? null,
+            'education' => $validatedData['education']??null,
+            'faculty' => $validatedData['faculty']??null,
+            'city' => $validatedData['city']??null,
+            'experience_level' => $validatedData['experience_level']??null,
             'linkedin' => $validatedData['linkedin'] ?? null,
             'github' => $validatedData['github'] ?? null,
         ]);
 
         $candidate->save();
- 
-        $image = $this->uploadFileToCloudinary($request,'image');
+        $image = null;
+        if($request['image']){
+            $image = $this->uploadFileToCloudinary($request,'image');
+        }
 
         $user = new User([
-            'name' => $validatedData['user']['name'],
-            'email' => $validatedData['user']['email'],
-            'password' => bcrypt($validatedData['user']['password']),
-            'username' => $validatedData['user']['username'],
-            'image'=>  $image,
+            'name' => $validatedData['name'],
+            'email' => $validatedData['email'],
+            'password' => bcrypt($validatedData['password']),
+            'username' => $validatedData['username'],
+            'image'=>  $image ?? null,
             'role' => 'candidate', 
         ]);
 
