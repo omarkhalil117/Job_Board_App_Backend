@@ -15,8 +15,11 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use CloudinaryLabs\CloudinaryLaravel\Facades\Cloudinary;
+use Dotenv\Exception\ValidationException;
 use GuzzleHttp\Client;
 use Illuminate\Auth\Events\Registered;
+use Illuminate\Support\Facades\Auth;
+use Laravel\Sanctum\PersonalAccessToken;
 
 class AuthController extends Controller
 {
@@ -44,10 +47,16 @@ class AuthController extends Controller
             'image' => $image,
             'role' => 'employer', 
         ]);
+  
+ 
+   
+        $user->save(); 
         event(new Registered($user));
-        
-        $employer->user()->save($user);
-        event(new Registered($user));
+        $user->sendEmailVerificationNotification(); 
+    
+        $user->userable()->associate($employer); 
+        $user->save();
+
         return response()->json([
             'status' => true,
             'message' => 'Employer Created Successfully',
@@ -71,7 +80,7 @@ class AuthController extends Controller
         ]);
 
         $candidate->save();
-
+ 
         $image = $this->uploadFileToCloudinary($request,'image');
 
         $user = new User([
@@ -83,9 +92,12 @@ class AuthController extends Controller
             'role' => 'candidate', 
         ]);
 
+        $user->save(); 
         event(new Registered($user));
-
-        $candidate->user()->save($user);
+        $user->sendEmailVerificationNotification() ;
+    
+        $user->userable()->associate($candidate); 
+        $user->save();
     
         return response()->json([
             'status' => true,
@@ -95,43 +107,61 @@ class AuthController extends Controller
     }
     
     public function login(Request $request){
+
         $request->validate([
             'email' => 'required|email',
             'password' => 'required',
-            'device_name' => 'required',
         ]);
-     
+    
         $user = User::where('email', $request->email)->first();
-     
+    
         if (! $user || ! Hash::check($request->password, $user->password)) {
             return response()->json(['error' => 'Unauthorized'], 401);
         }
-        return $user->createToken($request->device_name)->plainTextToken;
+    
+        $token = $user->createToken($request->email)->plainTextToken;
+    
+        return $this->getUserDataByRole($token);
     }
-     
-    public function getUserData(Request $request){
-        $user = $request->user();
-
+    
+    public function getUserDataByRole($token){
+        
+        $currentRequestPersonalAccessToken = PersonalAccessToken::findToken($token);
+        $user = $currentRequestPersonalAccessToken->tokenable;
+    
+        if (!$user) {
+            return response()->json(['error' => 'Unauthorized'], 401);
+        }
+    
         if ($user->role == "admin") {
-            return new UserResource($user);
+            return [
+                'token' => $token,
+                'user' => new UserResource($user),
+            ];
         }
         elseif ($user->role == "employer") {
             $employer = Employer::find($user->userable_id);
-            
             if ($employer) {
-                return new EmployerResource($employer);
+                return [
+                    'token' => $token,
+                    'user' => new EmployerResource($employer),
+                ];
             } 
-        } elseif ($user->role == "candidate") {
+        } 
+        elseif ($user->role == "candidate") {
             $candidate = Candidate::find($user->userable_id);
-           // new CandidateResource($candidate);
             if ($candidate) {
-                return new CandidateResource($candidate);
+                return [
+                    'token' => $token,
+                    'user' => new CandidateResource($candidate),
+                ];
             }
-        } else {
-            return response()->json(['error' => 'Invalid user role'], 400);
         }
+    
+        return response()->json(['error' => 'Invalid user role or no associated data found'], 400);
     }
-    private function uploadFileToCloudinary($request, $field){
+
+    public function uploadFileToCloudinary($request, $field){
         $fileUrl = '';
         
         if ($request->hasFile($field)) {
@@ -168,5 +198,6 @@ class AuthController extends Controller
     
         return $fileUrl;
     }
+    
 }
 

@@ -5,8 +5,10 @@ use Illuminate\Support\Facades\Route;
 use \App\Http\Controllers\API\AdminController;
 use App\Http\Controllers\API\AuthController;
 use App\Http\Controllers\API\CandidateController;
-use App\Http\Controllers\API\PostController ;
-use App\Http\Controllers\API\EmployerController ;
+use \App\Models\Post;
+use \App\Http\Controllers\API\PostController;
+use \App\Http\Controllers\API\EmployerController ;
+use \App\Http\Controllers\API\ApplicationController ;
 use App\Http\Controllers\API\SkillController ;
 use App\Models\User;
 use App\Models\Post;
@@ -31,7 +33,27 @@ Route::get('admin/candidates', [AdminController::class, 'getCandidates'])->middl
 Route::get("posts/deleted", [PostController::class, 'deletedPosts'])->middleware('role:any'); 
 Route::get('posts/restore/{id}', [PostController::class, 'restorePost'])->middleware('role:any'); 
 Route::delete('posts/force-delete/{id}', [PostController::class, 'forceDelete'])->middleware('role:any'); 
-Route::apiResource("posts",PostController::class)->middleware('role:any');
+
+
+
+Route::get('/posts/titles', function(Request $request) {
+    return Post::select('job_title')->pluck('job_title')->toArray();
+});
+
+Route::get('/posts/locations', function(Request $request) {
+    $locations = Post::select('location')->pluck('location')->toArray();
+    $titles = Post::select('job_title')->pluck('job_title')->toArray();
+
+    $data = [
+        "locations"=> $locations,
+        "titles"=> $titles
+    ];
+
+    return response()->json($data);
+});
+
+Route::apiResource('posts' , PostController::class)->middleware('role:any');
+// Route::apiResource('applications' , ApplicationController::class);
 Route::apiResource("skills",SkillController::class);
 // Employer
 Route::apiResource("employers",EmployerController::class)->middleware('role:any'); 
@@ -50,36 +72,21 @@ Route::post('login', [AuthController::class, 'login'] )->middleware('role:any');
 Route::get('user', [AuthController::class, 'getUserData'] )->middleware('auth:sanctum'); //token any role
 
 // Routes for email verification
-Route::get('/email/verify', function () {
-    return response()->json([
-        'message' => 'Please check your email for the verification link.'
-    ]);
-})->middleware('auth:sanctum')->name('verification.notice');
 
+ Route::get('/email/verify/{id}', function () {
 
-// Handle email verification
-Route::get('/email/verify/{id}/{hash}', function (EmailVerificationRequest $request) {
-    $request->fulfill();
-    return response()->json([
-        'message' => 'Email verified successfully.',
-    ], 200);
+    return redirect(env('FRONT_URL'));
     
-})->middleware(['auth:sanctum', 'signed'])->name('verification.verify');
+})->name('verification.verify');
 
-// Resend verification link
-Route::post('email/verification-notification', function (Request $request) {
-    $request->user()->sendEmailVerificationNotification();
 
-    return response()->json([
-        'message' => 'Verification link sent!'
-    ]);
-})->middleware(['auth:sanctum', 'throttle:6,1'])->name('verification.send');
 // Candidate Routes
-Route::apiResource("candidates", CandidateController::class);
-Route::get("candidates/{id}/applications", [CandidateController::class, "appliedApplications"]);
-Route::post("applications/{post_id}/apply", [CandidateController::class, "applyToPost"]);
-Route::post("applications/{post_id}/cancel", [CandidateController::class, "cancelApplication"]);
+Route::get("candidates/applications", [CandidateController::class, "appliedApplications"]);
+Route::apiResource("candidates", CandidateController::class)->middleware('role:any');
+Route::post("applications", [CandidateController::class, "applyToPost"]);
+Route::delete("applications", [CandidateController::class, "cancelApplication"]);
 
+// home end points
 Route::get('/home/posts' , function (Request $request) {
 
     $query = Post::query();
@@ -91,7 +98,8 @@ Route::get('/home/posts' , function (Request $request) {
 
     if ($request->has('work_type'))
     {
-        $query->where('work_type', $request->input('work_type'));
+        $workTypes = explode(',', $request->input('work_type'));
+        $query->whereIn('work_type', $workTypes);
     }
 
     if ($request->has('job_title'))
@@ -105,9 +113,9 @@ Route::get('/home/posts' , function (Request $request) {
         $salary = $request->input('salary');
         $query->where('start_salary', '<=' , $salary)
               ->where('end_salary', '>=', $salary);
-            //   ->with('employer');
     }
 
+    
     $res = $query->with('employer')->paginate(5);
 
     return $res;
