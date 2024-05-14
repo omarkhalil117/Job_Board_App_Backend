@@ -29,7 +29,7 @@ class AuthController extends Controller
         $validatedData = $request->validated();
         
         $logo = null;
-        if($request['resume']){
+        if($request['logo']){
             $logo = $this->uploadFileToCloudinary($request,'logo');
         }
 
