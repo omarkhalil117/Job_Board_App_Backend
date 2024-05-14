@@ -40,10 +40,10 @@ class AuthController extends Controller
         $image = $this->uploadFileToCloudinary($request,'image');
 
         $user = new User([
-            'name' => $validatedData['user']['name'],
-            'email' => $validatedData['user']['email'],
-            'password' => bcrypt($validatedData['user']['password']),
-            'username' => $validatedData['user']['username'],
+            'name' => $validatedData['name'],
+            'email' => $validatedData['email'],
+            'password' => bcrypt($validatedData['password']),
+            'username' => $validatedData['username'],
             'image' => $image,
             'role' => 'employer', 
         ]);
@@ -66,15 +66,17 @@ class AuthController extends Controller
 
     public function candidateRegister(StoreCandidateRequest $request){
         $validatedData = $request->validated();
-
-        $resume = $this->uploadFileToCloudinary($request,'resume');
+        $resum = '';
+        if($request['resume']){
+            $resume = $this->uploadFileToCloudinary($request,'resume');
+        }
 
         $candidate = new Candidate([
-            'resume' =>  $resume,
-            'education' => $validatedData['education'],
-            'faculty' => $validatedData['faculty'],
-            'city' => $validatedData['city'],
-            'experience_level' => $validatedData['experience_level'],
+            'resume' =>  $resume ?? null,
+            'education' => $validatedData['education']??null,
+            'faculty' => $validatedData['faculty']??null,
+            'city' => $validatedData['city']??null,
+            'experience_level' => $validatedData['experience_level']??null,
             'linkedin' => $validatedData['linkedin'] ?? null,
             'github' => $validatedData['github'] ?? null,
         ]);
@@ -84,10 +86,10 @@ class AuthController extends Controller
         $image = $this->uploadFileToCloudinary($request,'image');
 
         $user = new User([
-            'name' => $validatedData['user']['name'],
-            'email' => $validatedData['user']['email'],
-            'password' => bcrypt($validatedData['user']['password']),
-            'username' => $validatedData['user']['username'],
+            'name' => $validatedData['name'],
+            'email' => $validatedData['email'],
+            'password' => bcrypt($validatedData['password']),
+            'username' => $validatedData['username'],
             'image'=>  $image,
             'role' => 'candidate', 
         ]);

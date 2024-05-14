@@ -22,18 +22,18 @@ class StoreCandidateRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'resume' => ['required', 'file', 'mimes:pdf,doc,docx'], 
-            'education' => ['required', 'string'],
-            'faculty' => ['required', 'string'],
-            'city' => ['required', 'string'],
-            'experience_level' => ['required', 'string', 'in:junior,mid-senior,senior,manager,team-lead'],
+            'resume' => 'nullable|mimes:pdf,doc,docx',
+            'education' => 'nullable|string',
+            'faculty' => 'nullable|string',
+            'city' =>  'nullable|string',
+            'experience_level' => 'nullable|string',
             'linkedin' => 'nullable|url',
             'github' => 'nullable|url',
-            'user.name' => ['required', 'string'],
-            'user.email' => ['required', 'email', 'unique:users,email'],
-            'user.password' => ['required', 'string', 'min:6'],
-            'user.username' => ['required', 'string', 'unique:users,username'],
-            'user.image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'name' => ['required', 'string'],
+            'email' => ['required', 'email', 'unique:users,email'],
+            'password' => ['required', 'string', 'min:6'],
+            'username' => ['required', 'string', 'unique:users,username'],
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ];
     }
 }
