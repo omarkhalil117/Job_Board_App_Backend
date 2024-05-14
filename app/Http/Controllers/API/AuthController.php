@@ -27,8 +27,6 @@ class AuthController extends Controller
     public function empRegister(StoreEmployerRequest $request){
 
         $validatedData = $request->validated();
-
-        $logo = $this->uploadFileToCloudinary($request,'logo');
         
         $logo = null;
         if($request['resume']){
@@ -46,7 +44,7 @@ class AuthController extends Controller
         if($request['image']){
             $image = $this->uploadFileToCloudinary($request,'image');
         }
-        
+
         $user = new User([
             'name' => $validatedData['name'],
             'email' => $validatedData['email'],
