@@ -15,6 +15,8 @@ use App\Models\Post;
 use App\Models\Application;
 use App\Http\Resources\EmployerResource;
 use App\Http\Requests\UpdateUserRequest;
+use App\Http\Requests\UpdateEmployerRequest;
+
 use App\Http\Resources\PostResource;
 
 
@@ -55,7 +57,7 @@ class EmployerController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateUserRequest $request, Employer $employer)
+    public function update(UpdateEmployerRequest $request, Employer $employer)
     {
         try {
             DB::beginTransaction();
