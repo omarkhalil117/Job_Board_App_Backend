@@ -5,14 +5,17 @@ namespace App\Http\Controllers\API;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreApplicationRequest;
 use App\Http\Requests\StoreCandidateRequest;
+use App\Http\Requests\UpdateCandidateRequest;
 use App\Http\Resources\ApplicationResource;
 use App\Http\Resources\CandidateResource;
 use App\Http\Resources\UserResource;
 use App\Models\Application;
 use App\Models\Candidate;
 use App\Models\Post;
+use App\Models\User;
 use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
 class CandidateController extends Controller
@@ -47,9 +50,33 @@ class CandidateController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Candidate $candidate)
+    public function update(UpdateCandidateRequest $request, Candidate $candidate)
     {
-        return response()->json(["status" => "updated", "data" => $candidate]);
+        
+        try {
+            DB::beginTransaction();
+            $updatedCandidate = Candidate::findOrFail($candidate->id);
+            $updatedUser = User::findOrFail($updatedCandidate->user->id);
+            if (!empty($request['password'])) {
+                $request['password'] = bcrypt($request['password']);
+            }
+            $updatedCandidate->update($request->all());
+            $updatedUser->update($request->all());
+            if (!empty($request['resume'])) {
+                $updatedCandidate->resume = app('App\Http\Controllers\API\AuthController')->uploadFileToCloudinary($request, 'resume');
+                $updatedCandidate->save();
+            }
+            if (!empty($request['image'])) {
+                $updatedUser->image = app('App\Http\Controllers\API\AuthController')->uploadFileToCloudinary($request, 'image');
+                $updatedUser->save();
+            }
+            DB::commit();
+            $updatedCandidate->refresh();
+            return response()->json(["status" => "updated", "data" => CandidateResource::make($updatedCandidate)]);
+        }
+        catch(Exception $e) {
+            DB::rollBack();
+        }
     }
 
     /**
