@@ -28,7 +28,7 @@ class EmployerResource extends JsonResource
             'email'=>$this->user->email,
             'username'=>$this->user->username,
             'image'=>$this->user->image,
-            'posts'=>PostResource::collection($this->posts)
+            // 'posts'=>PostResource::collection($this->posts)
         ];
     }
 }
