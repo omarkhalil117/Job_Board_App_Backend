@@ -30,15 +30,23 @@ class AuthController extends Controller
 
         $logo = $this->uploadFileToCloudinary($request,'logo');
         
+        $logo = null;
+        if($request['resume']){
+            $logo = $this->uploadFileToCloudinary($request,'logo');
+        }
+
         $employer = new Employer([
             'company_name' => $request['company_name'],
-            'logo' => $logo,
+            'logo' => $logo ?? null,
         ]);
         
         $employer->save();
         
-        $image = $this->uploadFileToCloudinary($request,'image');
-
+        $image = null;
+        if($request['image']){
+            $image = $this->uploadFileToCloudinary($request,'image');
+        }
+        
         $user = new User([
             'name' => $validatedData['name'],
             'email' => $validatedData['email'],
@@ -66,7 +74,7 @@ class AuthController extends Controller
 
     public function candidateRegister(StoreCandidateRequest $request){
         $validatedData = $request->validated();
-        $resum = '';
+        $resume = null;
         if($request['resume']){
             $resume = $this->uploadFileToCloudinary($request,'resume');
         }
@@ -82,15 +90,17 @@ class AuthController extends Controller
         ]);
 
         $candidate->save();
- 
-        $image = $this->uploadFileToCloudinary($request,'image');
+        $image = null;
+        if($request['image']){
+            $image = $this->uploadFileToCloudinary($request,'image');
+        }
 
         $user = new User([
             'name' => $validatedData['name'],
             'email' => $validatedData['email'],
             'password' => bcrypt($validatedData['password']),
             'username' => $validatedData['username'],
-            'image'=>  $image,
+            'image'=>  $image ?? null,
             'role' => 'candidate', 
         ]);
 

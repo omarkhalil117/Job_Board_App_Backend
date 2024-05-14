@@ -26,13 +26,13 @@ class StoreCandidateRequest extends FormRequest
             'education' => 'nullable|string',
             'faculty' => 'nullable|string',
             'city' =>  'nullable|string',
-            'experience_level' => 'nullable|string',
+            'experience_level' => 'nullable|string|in:junior,mid-senior,senior,manager,team-lead',
             'linkedin' => 'nullable|url',
             'github' => 'nullable|url',
-            'name' => ['required', 'string'],
-            'email' => ['required', 'email', 'unique:users,email'],
-            'password' => ['required', 'string', 'min:6'],
-            'username' => ['required', 'string', 'unique:users,username'],
+            'name' => 'required|string',
+            'email' => 'required|email|unique:users,email',
+            'password' => 'required|string|min:6',
+            'username' => 'required|string|unique:users,username',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ];
     }
