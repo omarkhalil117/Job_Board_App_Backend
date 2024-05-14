@@ -15,6 +15,8 @@ use App\Models\Post;
 use App\Models\Application;
 use App\Http\Resources\EmployerResource;
 use App\Http\Requests\UpdateUserRequest;
+use App\Http\Requests\UpdateEmployerRequest;
+
 use App\Http\Resources\PostResource;
 
 
@@ -45,15 +47,17 @@ class EmployerController extends Controller
      */
     public function show(Employer $employer)
     {
-        $employers = Employer::with('user', 'posts')->findOrFail($employer->id);
-        return response()->json(["status" => "success", "data" => new EmployerResource($employer)]);
+        $employers = Employer::with('user')->findOrFail($employer->id);
+        return response()->json(["status" => "success", 
+        "data" => new EmployerResource($employer)
+        ]);
 
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateUserRequest $request, Employer $employer)
+    public function update(UpdateEmployerRequest $request, Employer $employer)
     {
         try {
             DB::beginTransaction();
@@ -64,12 +68,20 @@ class EmployerController extends Controller
     
             // Update the employer
             $employer->update($request->all());
-    
+            if (!empty($request['logo'])) {
+                $employer->logo = app('App\Http\Controllers\API\AuthController')->uploadFileToCloudinary($request, 'logo');
+                $employer->save();
+            }
+            if (!empty($request['image'])) {
+                $user->image = app('App\Http\Controllers\API\AuthController')->uploadFileToCloudinary($request, 'image');
+                $user->save();
+            }
             DB::commit();
-    
+            $employer->refresh();
             return response()->json([
                 "status" => "success",
                 "data" => new EmployerResource($employer)
+                
             ]);
         } catch (\Exception $e) {
             DB::rollBack();
@@ -91,10 +103,27 @@ class EmployerController extends Controller
         return response()->json(["status" => "success", "message" => "Employer deleted successfully"]);
 
     }
+    public function getEmployerJobs(Request $request, string $employer_id)
+        {
+
+            $perPage = $request->query('perPage', 3);
+            $perPage = max(1, min(10, intval($perPage)));
+
+            $employer = Employer::findOrFail($employer_id);
+
+            $jobs = $employer->posts()->paginate($perPage);
+
+            return response()->json([
+                "status" => "success",
+                "jobs" => $jobs,
+                
+            ]);
+        }
     public function getApplications( string $post_id ){
-        $perPage = request()->query('perPage', 10);
+        $perPage = request()->query('perPage', 2);
         $post = new PostResource(Post::find($post_id));
-        $apps = Application::where("post_id",$post_id)->with("candidate")->paginate($perPage);
+        $apps = Application::where("post_id",$post_id)->with("candidate")->paginate($perPage)
+        ;
         return response()->json(["status" => "success", "post" => $post, "applications" => $apps]);
 
     }
