@@ -68,9 +68,16 @@ class EmployerController extends Controller
     
             // Update the employer
             $employer->update($request->all());
-    
+            if (!empty($request['logo'])) {
+                $employer->logo = app('App\Http\Controllers\API\AuthController')->uploadFileToCloudinary($request, 'logo');
+                $employer->save();
+            }
+            if (!empty($request['image'])) {
+                $user->image = app('App\Http\Controllers\API\AuthController')->uploadFileToCloudinary($request, 'image');
+                $user->save();
+            }
             DB::commit();
-    
+            $employer->refresh();
             return response()->json([
                 "status" => "success",
                 "data" => new EmployerResource($employer)
