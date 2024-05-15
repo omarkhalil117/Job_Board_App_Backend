@@ -31,7 +31,6 @@ class StorePostRequest extends FormRequest
             'end_salary' => ['numeric'],            
             'location' => ['required'],
             'work_type' => ['required', Rule::in(['remote', 'on-site', 'hybrid'])],
-            'application_deadline' => ['required', 'date'],
             'skills' => [ 'required' , 'exists:skills,id'],
             
         ];
@@ -49,8 +48,6 @@ class StorePostRequest extends FormRequest
             'location.required' => 'The location field is required.',
             'work_type.required' => 'The work type field is required.',
             'work_type.in' => 'The selected work type is invalid.',
-            'application_deadline.required' => 'The application deadline field is required.',
-            'application_deadline.date' => 'The application deadline must be a valid date.',
             'skills.required' => 'At least one skill is required.',
             'skills.exists' => 'One or more selected skills do not exist.',
            
