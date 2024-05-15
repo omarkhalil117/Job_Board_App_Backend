@@ -11,11 +11,14 @@ use \App\Http\Controllers\API\EmployerController ;
 use \App\Http\Controllers\API\ApplicationController ;
 use App\Http\Controllers\API\SkillController ;
 use App\Models\User;
+
 use Dotenv\Exception\ValidationException;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use Laravel\Socialite\Facades\Socialite;
+
+
 
 // 
 // Admin APIS
@@ -53,6 +56,7 @@ Route::apiResource('posts' , PostController::class)->middleware('role:any');
 Route::apiResource("skills",SkillController::class);
 // Employer
 Route::apiResource("employers",EmployerController::class)->middleware('role:any'); 
+Route::get("jobs/employer/{employer_id}",[EmployerController::class,"getEmployerJobs"])->middleware('role:any');  
 Route::get("job-applications/{post_id}",[EmployerController::class,"getApplications"])->middleware('role:any');  
 Route::put("application-approval/{application_id}",[EmployerController::class,"approveApplication"])->middleware('role:any');  
 
@@ -64,7 +68,7 @@ Route::post('CandidateRegister', [AuthController::class, 'candidateRegister'])->
 Route::post('login', [AuthController::class, 'login'] )->middleware('role:any');  //without token
 
 // Get user data from token (admin-employer-candidate)
-Route::get('user', [AuthController::class, 'getUserData'] )->middleware('auth:sanctum'); //token any role
+Route::get('user', [AuthController::class, 'getUser'] )->middleware('auth:sanctum'); //token any role
 
 // Routes for email verification
 

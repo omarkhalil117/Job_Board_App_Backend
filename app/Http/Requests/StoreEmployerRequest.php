@@ -22,13 +22,13 @@ class StoreEmployerRequest extends FormRequest
     public function rules()
     {
         return [
-            'company_name' => 'string|max:255',
+            'company_name' => 'nullable|string|max:255',
             'logo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-            'user.name' => 'required|string|max:255',
-            'user.email' => 'required|email|unique:users,email,NULL,id,userable_type,App\Models\Employer',
-            'user.password' => 'required|string|min:8',
-            'user.username' => 'required|string|max:255|unique:users,username,NULL,id,userable_type,App\Models\Employer',
-            'user.image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|unique:users,email,NULL,id,userable_type,App\Models\Employer',
+            'password' => 'required|string|min:6',
+            'username' => 'required|string|max:255|unique:users,username,NULL,id,userable_type,App\Models\Employer',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ];
     }
 }

@@ -29,7 +29,8 @@ class CandidateResource extends JsonResource
             'name'=>$this->user->name,
             'email'=>$this->user->email,
             'username'=>$this->user->username,
-            'image'=>$this->user->image
+            'image'=>$this->user->image,
+            'skills'=>$this->skills,
         ];
     }
 }

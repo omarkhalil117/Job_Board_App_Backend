@@ -18,7 +18,8 @@ class ApplicationResource extends JsonResource
         return [
             'id' => $this->id,
             'candidate_id'=>$this->candidate_id,
-            'post_id'=>$this->post_id,
+            'post'=>$this->post,
+            'post_id'=>$this->post->id,
             'resume'=>$this->resume ?? null,
             'email'=>$this->email ?? null,
             'phone'=>$this->phone ?? null,
