@@ -114,7 +114,7 @@ class EmployerController extends Controller
     $query = $employer->posts();
 
     $status = $request->query('status');
-    if ($status) {
+    if ($status && $status !== 'all') {
         $query->where('status', $status);
     }
 
