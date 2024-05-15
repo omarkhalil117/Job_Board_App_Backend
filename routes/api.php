@@ -80,7 +80,7 @@ Route::get('user', [AuthController::class, 'getUserData'] )->middleware('auth:sa
 
 
 // Candidate Routes
-Route::get("candidates/applications", [CandidateController::class, "appliedApplications"]);
+Route::get("candidates/applications", [CandidateController::class, "appliedApplications"])->middleware('role:candidate');
 Route::apiResource("candidates", CandidateController::class)->middleware('role:any');
 Route::post("applications", [CandidateController::class, "applyToPost"]);
 Route::delete("applications", [CandidateController::class, "cancelApplication"]);
