@@ -68,7 +68,7 @@ Route::post('CandidateRegister', [AuthController::class, 'candidateRegister'])->
 Route::post('login', [AuthController::class, 'login'] )->middleware('role:any');  //without token
 
 // Get user data from token (admin-employer-candidate)
-Route::get('user', [AuthController::class, 'getUserData'] )->middleware('auth:sanctum'); //token any role
+Route::get('user', [AuthController::class, 'getUser'] )->middleware('auth:sanctum'); //token any role
 
 // Routes for email verification
 

@@ -170,6 +170,39 @@ class AuthController extends Controller
     
         return response()->json(['error' => 'Invalid user role or no associated data found'], 400);
     }
+    public function getUser(Request $request){
+        
+            $user = $request->user();
+    
+        if (!$user) {
+            return response()->json(['error' => 'Unauthorized'], 401);
+        }
+    
+        if ($user->role == "admin") {
+            return [
+                'user' => new UserResource($user),
+            ];
+        }
+        elseif ($user->role == "employer") {
+            $employer = Employer::find($user->userable_id);
+            if ($employer) {
+                return [
+                    'user' => new EmployerResource($employer),
+                ];
+            } 
+        } 
+        elseif ($user->role == "candidate") {
+            $candidate = Candidate::find($user->userable_id);
+            if ($candidate) {
+                return [
+
+                    'user' => new CandidateResource($candidate),
+                ];
+            }
+        }
+    
+        return response()->json(['error' => 'Invalid user role or no associated data found'], 400);
+    }
     public function getRoleByToken($token){
         
         $currentRequestPersonalAccessToken = PersonalAccessToken::findToken($token);
