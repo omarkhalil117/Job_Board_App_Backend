@@ -103,22 +103,29 @@ class EmployerController extends Controller
         return response()->json(["status" => "success", "message" => "Employer deleted successfully"]);
 
     }
+
     public function getEmployerJobs(Request $request, string $employer_id)
-        {
+{
+    $perPage = $request->query('perPage', 3);
+    $perPage = max(1, min(10, intval($perPage)));
 
-            $perPage = $request->query('perPage', 3);
-            $perPage = max(1, min(10, intval($perPage)));
+    $employer = Employer::findOrFail($employer_id);
 
-            $employer = Employer::findOrFail($employer_id);
+    $query = $employer->posts();
 
-            $jobs = $employer->posts()->paginate($perPage);
+    $status = $request->query('status');
+    if ($status) {
+        $query->where('status', $status);
+    }
 
-            return response()->json([
-                "status" => "success",
-                "jobs" => $jobs,
-                
-            ]);
-        }
+    $jobs = $query->paginate($perPage);
+
+    return response()->json([
+        "status" => "success",
+        "jobs" => $jobs,
+    ]);
+}
+
     public function getApplications( string $post_id ){
         $perPage = request()->query('perPage', 2);
         $post = new PostResource(Post::find($post_id));
