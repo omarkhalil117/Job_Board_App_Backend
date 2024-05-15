@@ -170,7 +170,22 @@ class AuthController extends Controller
     
         return response()->json(['error' => 'Invalid user role or no associated data found'], 400);
     }
-
+    public function getRoleByToken($token){
+        
+        $currentRequestPersonalAccessToken = PersonalAccessToken::findToken($token);
+        $user = $currentRequestPersonalAccessToken->tokenable;
+    
+        if (!$user) {
+            return response()->json(['error' => 'Unauthorized'], 401);
+        }
+    
+        if ($user->role) {
+            return $user->role;
+        }
+        
+    
+        return response()->json(['error' => 'Invalid user role or no associated data found'], 400);
+    }
     public function uploadFileToCloudinary($request, $field){
         $fileUrl = '';
         
