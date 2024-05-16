@@ -23,11 +23,12 @@ class PostController extends Controller
 
     public function store(StorePostRequest $request)
     {
+        $employer = app('App\Http\Controllers\API\AuthController')->getUserDataByRole($request->bearerToken())['user'];
         $validatedData = $request->validated();
         
     
         // $validatedData['employer_id'] = auth()->user()->id;
-        $validatedData['employer_id'] = 1;
+        $validatedData['employer_id'] = $employer->id;
         $validatedData['status'] = "pending";
 
         $post_skills=$validatedData['skills'];
