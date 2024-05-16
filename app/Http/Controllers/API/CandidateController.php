@@ -88,6 +88,7 @@ class CandidateController extends Controller
         }
         catch(Exception $e) {
             DB::rollBack();
+            return response()->json(["error" => $e->getMessage()]);
         }
     }
 
@@ -132,10 +133,15 @@ class CandidateController extends Controller
     }
 
     public function cancelApplication(Request $request) {
-        $application = Application::findOrFail($request['app_id']);
-        
-        $application->delete();
-        
-        return response()->json(["status" => "deleted successfully", "data" => $application]);
+        try {
+            $application = Application::findOrFail($request['app_id']);
+            
+            $application->delete();
+            
+            return response()->json(["status" => "deleted successfully", "data" => $application]);
+        }
+        catch (Exception $e) {
+            return response()->json(["error" => $e->getMessage()]);
+        }
     }
 }
