@@ -11,11 +11,13 @@ use \App\Http\Controllers\API\EmployerController ;
 use \App\Http\Controllers\API\ApplicationController ;
 use App\Http\Controllers\API\SkillController ;
 use App\Models\User;
-
+use Illuminate\Support\Str;
 use Dotenv\Exception\ValidationException;
+use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
+use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Facades\URL;
 use Laravel\Socialite\Facades\Socialite;
 
@@ -81,7 +83,6 @@ return redirect('http://localhost:5173' . '?verify=true');
 })->name('verification.verify');
 
 
-
 Route::post('/email/verified', function (Request $request) {
     $request->validate([
         'timestamp' => 'required|date',
@@ -100,6 +101,45 @@ Route::post('/email/verified', function (Request $request) {
         return response()->json(['error' => 'User not found'], 404);
     }
 })->middleware('auth:sanctum')->name('verified');
+
+Route::post('/forgot-password', function (Request $request) {
+    $request->validate(['email' => 'required|email']);
+ 
+    $status = Password::sendResetLink(
+        $request->only('email')
+    );
+ 
+    return $status === Password::RESET_LINK_SENT
+                ? back()->with(['status' => __($status)])
+                : back()->withErrors(['email' => __($status)]);
+})->middleware('guest')->name('password.email');
+
+Route::post('/reset-password', function (Request $request) {
+    $request->validate([
+        'token' => 'required',
+        'email' => 'required|email',
+        'password' => 'required|min:8|confirmed',
+    ]);
+
+    $status = Password::reset(
+        
+        $request->only('email', 'password', 'password_confirmation', 'token'),
+        function (User $user, string $password) {
+            $user->forceFill([
+                'password' => Hash::make($password),
+                'remember_token' => Str::random(60), 
+            ]);
+
+            $user->save();
+
+            event(new PasswordReset($user));
+        }
+    );
+
+    return $status === Password::PASSWORD_RESET
+        ? redirect('http://localhost:5173/')->with('status', __($status))
+        : back()->withErrors(['email' => [__($status)]]);
+})->middleware('guest')->name('password.update');
 
 // Candidate Routes
 Route::get("candidates/applications", [CandidateController::class, "appliedApplications"])->middleware('role:candidate');
@@ -141,3 +181,5 @@ Route::get('/home/posts' , function (Request $request) {
 
     return $res;
 });
+
+
