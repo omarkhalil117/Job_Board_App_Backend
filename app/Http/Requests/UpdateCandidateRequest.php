@@ -36,8 +36,8 @@ class UpdateCandidateRequest extends FormRequest
             'faculty' => 'nullable|string',
             'city' => 'nullable|string',
             'experience_level' => 'nullable|in:junior,mid-senior,senior,manager,team-lead',
-            'linkedin' => 'nullable|string|url',
-            'github' => 'nullable|string|url',
+            'linkedin' => 'nullable|string',
+            'github' => 'nullable|string',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ];
     }
