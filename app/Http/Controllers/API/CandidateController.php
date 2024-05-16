@@ -52,7 +52,14 @@ class CandidateController extends Controller
      */
     public function update(UpdateCandidateRequest $request, Candidate $candidate)
     {
-        
+        $candidate = Candidate::findOrFail($candidate->id);
+        $candidate->skills()->each(function ($skill, $key) {
+            $skill->delete();
+        });
+        $incomingSkills = json_decode($request['skills']);
+        $candidate->skills = $incomingSkills;
+        $candidate->save();
+        return response()->json($candidate);
         try {
             DB::beginTransaction();
             $updatedCandidate = Candidate::findOrFail($candidate->id);
