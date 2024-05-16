@@ -72,7 +72,9 @@ class AdminController extends Controller
         return response()->json(['message' => 'Post updated successfully'], 200);
     }
     public function getCandidates(){
-        $candidates = Candidate::withCount('applications')->with('applications')->get();
+        $page = request()->query('page', 1);
+        $perPage = $request->query('perPage', 10);
+        $candidates = Candidate::withCount('applications')->with('applications')->paginate($perPage, ['*'], 'page', $page);
         return response()->json(['candidates' => $candidates], 200);
     }
     
