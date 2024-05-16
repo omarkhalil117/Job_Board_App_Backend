@@ -127,7 +127,7 @@ class EmployerController extends Controller
 }
 
     public function getApplications( string $post_id ){
-        $perPage = request()->query('perPage', 2);
+        $perPage = request()->query('perPage', 7);
         $post = new PostResource(Post::find($post_id));
         $apps = Application::where("post_id",$post_id)->with("candidate")->paginate($perPage)
         ;
