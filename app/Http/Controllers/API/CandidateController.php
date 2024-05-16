@@ -53,19 +53,6 @@ class CandidateController extends Controller
      */
     public function update(UpdateCandidateRequest $request, Candidate $candidate)
     {
-        $candidate = Candidate::findOrFail($candidate->id);
-        $candidate->skills()->each(function ($skill, $key) {
-            $skill->delete();
-        });
-        $incomingSkills = [];
-        foreach (json_decode($request['skills']) as $skill) {
-            $myObject = new stdClass();
-            $myObject->candidate_id = $candidate->id;
-            $myObject->skill_id = $skill->id;
-            array_push($incomingSkills, $myObject);
-        }
-        $candidate->skills()->save($incomingSkills);
-        return response()->json($candidate);
         try {
             DB::beginTransaction();
             $updatedCandidate = Candidate::findOrFail($candidate->id);
@@ -83,6 +70,18 @@ class CandidateController extends Controller
                 $updatedUser->image = app('App\Http\Controllers\API\AuthController')->uploadFileToCloudinary($request, 'image');
                 $updatedUser->save();
             }
+            // Skills Handling
+            $incomingSkillIds = collect(json_decode($request['skills']))->pluck('id')->toArray();
+            $currentSkillIds = $candidate->skills->pluck('id')->toArray();
+            $skillsToAdd = array_diff($incomingSkillIds, $currentSkillIds);
+            $skillsToRemove = array_diff($currentSkillIds, $incomingSkillIds);
+            $candidate->skills()->detach($skillsToRemove);
+
+            // Add new skills
+            foreach ($skillsToAdd as $skillId) {
+                $candidate->skills()->attach($skillId, ['created_at' => now(), 'updated_at' => now()]);
+            }
+
             DB::commit();
             $updatedCandidate->refresh();
             return response()->json(["status" => "updated", "data" => CandidateResource::make($updatedCandidate)]);
