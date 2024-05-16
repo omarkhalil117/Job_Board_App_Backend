@@ -16,6 +16,7 @@ use App\Models\User;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use stdClass;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
 class CandidateController extends Controller
@@ -52,7 +53,6 @@ class CandidateController extends Controller
      */
     public function update(UpdateCandidateRequest $request, Candidate $candidate)
     {
-        
         try {
             DB::beginTransaction();
             $updatedCandidate = Candidate::findOrFail($candidate->id);
@@ -70,12 +70,25 @@ class CandidateController extends Controller
                 $updatedUser->image = app('App\Http\Controllers\API\AuthController')->uploadFileToCloudinary($request, 'image');
                 $updatedUser->save();
             }
+            // Skills Handling
+            $incomingSkillIds = collect(json_decode($request['skills']))->pluck('id')->toArray();
+            $currentSkillIds = $candidate->skills->pluck('id')->toArray();
+            $skillsToAdd = array_diff($incomingSkillIds, $currentSkillIds);
+            $skillsToRemove = array_diff($currentSkillIds, $incomingSkillIds);
+            $candidate->skills()->detach($skillsToRemove);
+
+            // Add new skills
+            foreach ($skillsToAdd as $skillId) {
+                $candidate->skills()->attach($skillId, ['created_at' => now(), 'updated_at' => now()]);
+            }
+
             DB::commit();
             $updatedCandidate->refresh();
             return response()->json(["status" => "updated", "data" => CandidateResource::make($updatedCandidate)]);
         }
         catch(Exception $e) {
             DB::rollBack();
+            return response()->json(["error" => $e->getMessage()]);
         }
     }
 
@@ -120,10 +133,15 @@ class CandidateController extends Controller
     }
 
     public function cancelApplication(Request $request) {
-        $application = Application::findOrFail($request['app_id']);
-        
-        $application->delete();
-        
-        return response()->json(["status" => "deleted successfully", "data" => $application]);
+        try {
+            $application = Application::findOrFail($request['app_id']);
+            
+            $application->delete();
+            
+            return response()->json(["status" => "deleted successfully", "data" => $application]);
+        }
+        catch (Exception $e) {
+            return response()->json(["error" => $e->getMessage()]);
+        }
     }
 }
