@@ -87,9 +87,12 @@ class PostController extends Controller
         return response()->json(["status" => "success", "message" => "Post deleted successfully"]);
 
     }
-    public function deletedPosts(){
-        $posts = Post::onlyTrashed()->get();
-        return response()->json(["status" => "success", "data" => PostResource::collection($posts)]);
+    public function deletedPosts( Request $request){
+        $page = $request->query('page', 1);
+        $perPage = $request->query('perPage', 10);
+        $employer_id = 1;
+        $posts = Post::onlyTrashed()->where('employer_id', $employer_id)->paginate($perPage, ['*'], 'page', $page);
+        return  PostResource::collection($posts);
     }
     public function restorePost(string $id){
         $post = Post::withTrashed()->find($id);
