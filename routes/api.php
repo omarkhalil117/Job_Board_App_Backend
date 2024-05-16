@@ -114,6 +114,7 @@ Route::get('/home/posts' , function (Request $request) {
               ->where('end_salary', '>=', $salary);
     }
 
+    $query->where('status','approved');
     
     $res = $query->with('employer')->paginate(5);
 
