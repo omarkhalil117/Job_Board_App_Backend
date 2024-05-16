@@ -16,6 +16,7 @@ use Dotenv\Exception\ValidationException;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
+use Illuminate\Support\Facades\URL;
 use Laravel\Socialite\Facades\Socialite;
 
 
@@ -74,10 +75,31 @@ Route::get('user', [AuthController::class, 'getUser'] )->middleware('auth:sanctu
 
  Route::get('/email/verify/{id}', function () {
 
-    return redirect(env('FRONT_URL'));
-    
+    //return redirect(env('FRONT_URL'));
+return redirect('http://localhost:5173' . '?verify=true');
+
 })->name('verification.verify');
 
+
+
+Route::post('/email/verified', function (Request $request) {
+    $request->validate([
+        'timestamp' => 'required|date',
+        'email' => 'required|email', 
+    ]);
+
+    // Find the user by email
+    $user = App\Models\User::where('email', $request->email)->first();
+
+    if ($user) {
+        $user->email_verified_at = now();
+        $user->save();
+
+        return response()->json(['message' => 'Email verified successfully']);
+    } else {
+        return response()->json(['error' => 'User not found'], 404);
+    }
+})->middleware('auth:sanctum')->name('verified');
 
 // Candidate Routes
 Route::get("candidates/applications", [CandidateController::class, "appliedApplications"])->middleware('role:candidate');
