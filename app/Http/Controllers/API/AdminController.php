@@ -14,25 +14,29 @@ class AdminController extends Controller
      * Display a listing of the resource.
      */
 
-     public function getApprovedJobs(){
+     public function getApprovedJobs()
+     {
+        $page = request()->query('page', 1);
 
-        $perPage = request()->query('perPage', 10);
-        $posts = Post::where('status', 'approved')->withCount('applications')->paginate($perPage);
-
-        return  PostResource::collection($posts);
-    }
+         $perPage = request()->query('perPage', 10);
+         $posts = Post::where('status', 'approved')->withCount('applications')->paginate($perPage, ['*'], 'page', $page);
+         return PostResource::collection($posts);
+     }
+     
     public function getPendingJobs(){
-
         $perPage = request()->query('perPage', 10);
-        $posts = Post::where('status', 'pending')->paginate($perPage); 
+        $page = request()->query('page', 1);
+
+        $posts = Post::where('status', 'pending')->paginate($perPage, ['*'], 'page', $page); 
         return  PostResource::collection($posts);
     }
     
 
     public function getRejectedJobs(Request $request)
     {
+        $page = request()->query('page', 1);
         $perPage = $request->query('perPage', 10);
-        $posts = Post::where('status', 'rejected')->paginate($perPage);
+        $posts = Post::where('status', 'rejected')->paginate($perPage, ['*'], 'page', $page);
 
         return PostResource::collection($posts);
     }
@@ -67,8 +71,10 @@ class AdminController extends Controller
         $post->update(['status' =>$request['status']]);
         return response()->json(['message' => 'Post updated successfully'], 200);
     }
-    public function getCandidates(){
-        $candidates = Candidate::withCount('applications')->with('applications')->get();
+    public function getCandidates( Request $request) {
+        $page = request()->query('page', 1);
+        $perPage = $request->query('perPage', 10);
+        $candidates = Candidate:: withCount('applications')->with('applications')->with('user') ->paginate($perPage, ['*'], 'page', $page);
         return response()->json(['candidates' => $candidates], 200);
     }
     
