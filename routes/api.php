@@ -25,16 +25,16 @@ use Laravel\Socialite\Facades\Socialite;
 
 // 
 // Admin APIS
-Route::get('admin/approvedjobs', [AdminController::class, 'getApprovedJobs'])->middleware('role:any');  
-Route::get('admin/pendingjobs', [AdminController::class, 'getPendingJobs'])->middleware('role:any');  
-Route::get('admin/rejectedjobs', [AdminController::class, 'getRejectedJobs'])->middleware('role:any'); 
-Route::put('admin/approve/{id}', [AdminController::class, 'update'])->middleware('role:any');  
-Route::get('admin/candidates', [AdminController::class, 'getCandidates'])->middleware('role:any'); 
+Route::get('admin/approvedjobs', [AdminController::class, 'getApprovedJobs'])->middleware('role:admin');  
+Route::get('admin/pendingjobs', [AdminController::class, 'getPendingJobs'])->middleware('role:admin');  
+Route::get('admin/rejectedjobs', [AdminController::class, 'getRejectedJobs'])->middleware('role:admin'); 
+Route::put('admin/approve/{id}', [AdminController::class, 'update'])->middleware('role:admin');  
+Route::get('admin/candidates', [AdminController::class, 'getCandidates'])->middleware('role:admin');
 
 // Posts APIS 
-Route::get("posts/deleted", [PostController::class, 'deletedPosts'])->middleware('role:any'); 
-Route::put('posts/restore/{id}', [PostController::class, 'restorePost'])->middleware('role:any'); 
-Route::delete('posts/force-delete/{id}', [PostController::class, 'forceDelete'])->middleware('role:any'); 
+Route::get("posts/deleted", [PostController::class, 'deletedPosts'])->middleware('role:admin,employer'); 
+Route::get('posts/restore/{id}', [PostController::class, 'restorePost'])->middleware('role:admin,employer'); 
+Route::delete('posts/force-delete/{id}', [PostController::class, 'forceDelete'])->middleware('role:admin,employer'); 
 
 
 
@@ -58,10 +58,10 @@ Route::apiResource('posts' , PostController::class)->middleware('role:any');
 // Route::apiResource('applications' , ApplicationController::class);
 Route::apiResource("skills",SkillController::class);
 // Employer
-Route::apiResource("employers",EmployerController::class)->middleware('role:any'); 
-Route::get("jobs/employer/{employer_id}",[EmployerController::class,"getEmployerJobs"])->middleware('role:any');  
-Route::get("job-applications/{post_id}",[EmployerController::class,"getApplications"])->middleware('role:any');  
-Route::put("application-approval/{application_id}",[EmployerController::class,"approveApplication"])->middleware('role:any');  
+Route::apiResource("employers",EmployerController::class)->middleware('role:employer'); 
+Route::get("jobs/employer/{employer_id}",[EmployerController::class,"getEmployerJobs"])->middleware('role:employer');  
+Route::get("job-applications/{post_id}",[EmployerController::class,"getApplications"])->middleware('role:employer');  
+Route::put("application-approval/{application_id}",[EmployerController::class,"approveApplication"])->middleware('role:employer'); 
 
 // Registeration
 Route::post('EmpRegister', [AuthController::class, 'empRegister'])->middleware('role:any');  
@@ -77,8 +77,8 @@ Route::get('user', [AuthController::class, 'getUser'] )->middleware('auth:sanctu
 
  Route::get('/email/verify/{id}', function () {
 
-    //return redirect(env('FRONT_URL'));
-return redirect('http://localhost:5173' . '?verify=true');
+    // return redirect(env('FRONT_URL'));
+return redirect(env('FRONT_URL').'?verify=true');
 
 })->name('verification.verify');
 
@@ -137,15 +137,15 @@ Route::post('/reset-password', function (Request $request) {
     );
 
     return $status === Password::PASSWORD_RESET
-        ? redirect('http://localhost:5173/')->with('status', __($status))
+        ? redirect(env('FRONT_URL'))->with('status', __($status))
         : back()->withErrors(['email' => [__($status)]]);
 })->middleware('guest')->name('password.update');
 
 // Candidate Routes
-Route::get("candidates/applications", [CandidateController::class, "appliedApplications"]);
-Route::apiResource("candidates", CandidateController::class)->middleware('role:any');
-Route::post("applications", [CandidateController::class, "applyToPost"]);
-Route::delete("applications", [CandidateController::class, "cancelApplication"]);
+Route::get("candidates/applications", [CandidateController::class, "appliedApplications"])->middleware('role:candidate');
+Route::apiResource("candidates", CandidateController::class)->middleware('role:candidate');
+Route::post("applications", [CandidateController::class, "applyToPost"])->middleware('role:candidate');
+Route::delete("applications", [CandidateController::class, "cancelApplication"])->middleware('role:candidate');
 
 // home end points
 Route::get('/home/posts' , function (Request $request) {
