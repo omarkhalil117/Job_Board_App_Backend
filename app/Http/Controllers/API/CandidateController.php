@@ -16,6 +16,7 @@ use App\Models\User;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use stdClass;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
 class CandidateController extends Controller
@@ -56,9 +57,14 @@ class CandidateController extends Controller
         $candidate->skills()->each(function ($skill, $key) {
             $skill->delete();
         });
-        $incomingSkills = json_decode($request['skills']);
-        $candidate->skills = $incomingSkills;
-        $candidate->save();
+        $incomingSkills = [];
+        foreach (json_decode($request['skills']) as $skill) {
+            $myObject = new stdClass();
+            $myObject->candidate_id = $candidate->id;
+            $myObject->skill_id = $skill->id;
+            array_push($incomingSkills, $myObject);
+        }
+        $candidate->skills()->save($incomingSkills);
         return response()->json($candidate);
         try {
             DB::beginTransaction();
