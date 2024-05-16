@@ -142,7 +142,7 @@ Route::post('/reset-password', function (Request $request) {
 })->middleware('guest')->name('password.update');
 
 // Candidate Routes
-Route::get("candidates/applications", [CandidateController::class, "appliedApplications"])->middleware('role:candidate');
+Route::get("candidates/applications", [CandidateController::class, "appliedApplications"]);
 Route::apiResource("candidates", CandidateController::class)->middleware('role:any');
 Route::post("applications", [CandidateController::class, "applyToPost"]);
 Route::delete("applications", [CandidateController::class, "cancelApplication"]);
