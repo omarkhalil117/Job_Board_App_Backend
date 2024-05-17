@@ -111,7 +111,9 @@ class CandidateController extends Controller
             $candidate = app('App\Http\Controllers\API\AuthController')->getUserDataByRole($request->bearerToken())['user'];
     
             $validated = $request->validated();
-    
+            if (Application::where('post_id', $validated['post_id'])->exists()) {
+                return response()->json(["error" => "duplicate"], 400);
+            }
             $application = new Application();
             $application->candidate_id = $candidate->id;
             $application->post_id = $validated['post_id'];
