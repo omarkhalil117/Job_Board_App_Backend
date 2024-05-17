@@ -91,7 +91,7 @@ class PostController extends Controller
     public function deletedPosts( Request $request){
         $page = $request->query('page', 1);
         $perPage = $request->query('perPage', 10);
-        $employer_id = 1;
+        $employer_id = $request->query('employer_id');
         $posts = Post::onlyTrashed()->where('employer_id', $employer_id)->paginate($perPage, ['*'], 'page', $page);
         return  PostResource::collection($posts);
     }

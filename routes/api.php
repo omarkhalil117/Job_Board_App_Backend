@@ -33,7 +33,7 @@ Route::get('admin/candidates', [AdminController::class, 'getCandidates'])->middl
 
 // Posts APIS 
 Route::get("posts/deleted", [PostController::class, 'deletedPosts'])->middleware('role:admin,employer'); 
-Route::get('posts/restore/{id}', [PostController::class, 'restorePost'])->middleware('role:admin,employer'); 
+Route::put('posts/restore/{id}', [PostController::class, 'restorePost'])->middleware('role:admin,employer'); 
 Route::delete('posts/force-delete/{id}', [PostController::class, 'forceDelete'])->middleware('role:admin,employer'); 
 
 
