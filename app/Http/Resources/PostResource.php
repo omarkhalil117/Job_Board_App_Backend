@@ -33,6 +33,7 @@ class PostResource extends JsonResource
             'work_type'=>$this->work_type,
             'application_deadline'=>$this->application_deadline,
             'status'=>$this->status,
+            'created_at'=> $this->created_at,
             'applications_count' => $this->applications_count ?? null,
             // 'skills'=>$this->skills
             // 'skills'=>SkillResource::collection($this->skills)
