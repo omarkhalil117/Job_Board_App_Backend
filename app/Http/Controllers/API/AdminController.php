@@ -74,7 +74,7 @@ class AdminController extends Controller
     public function getCandidates( Request $request) {
         $page = request()->query('page', 1);
         $perPage = $request->query('perPage', 10);
-        $candidates = Candidate:: withCount('applications')->with('applications')->with('user') ->paginate($perPage, ['*'], 'page', $page);
+        $candidates = Candidate:: withCount('applications')->with('applications.post') ->with('user') ->paginate($perPage, ['*'], 'page', $page);
         return response()->json(['candidates' => $candidates], 200);
     }
     
