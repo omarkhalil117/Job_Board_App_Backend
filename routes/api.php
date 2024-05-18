@@ -137,8 +137,8 @@ Route::post('/reset-password', function (Request $request) {
     );
 
     return $status === Password::PASSWORD_RESET
-        ? redirect(env('FRONT_URL'))->with('status', __($status))
-        : back()->withErrors(['email' => [__($status)]]);
+        ? response()->json(['status', __($status)])
+        : response()->json(['error' => [__($status)]]);
 })->middleware('guest')->name('password.update');
 
 // Candidate Routes
