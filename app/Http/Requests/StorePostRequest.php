@@ -30,6 +30,9 @@ class StorePostRequest extends FormRequest
             'location' => ['required'],
             'work_type' => ['required', Rule::in(['remote', 'on-site', 'hybrid'])],
             'skills' => [ 'required' , 'exists:skills,id'],
+            'start_salary' => ['nullable', 'numeric'],
+            'end_salary' => ['nullable', 'numeric'],
+            'application_deadline' => ['nullable', 'date'],
             
         ];
     }
