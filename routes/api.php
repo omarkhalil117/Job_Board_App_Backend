@@ -43,8 +43,8 @@ Route::get('/posts/titles', function(Request $request) {
 });
 
 Route::get('/posts/locations', function(Request $request) {
-    $locations = Post::select('location')->distinct()->pluck('location')->toArray();
-    $titles = Post::select('job_title')->distinct()->pluck('job_title')->toArray();
+    $locations = Post::select('location')->where('status','approved')->distinct()->pluck('location')->toArray();
+    $titles = Post::select('job_title')->where('status','approved')->distinct()->pluck('job_title')->toArray();
 
     $data = [
         "locations"=> $locations,
